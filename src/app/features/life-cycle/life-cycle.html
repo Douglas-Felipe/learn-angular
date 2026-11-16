@@ -1,0 +1,242 @@
+<div class="mx-auto max-w-6xl space-y-5 pb-8">
+  <!-- Header -->
+  <header class="space-y-1 border-b border-ng-border pb-4">
+    <h1 class="text-balance text-2xl font-bold text-ng-text">
+      Ciclo de Vida em Modo Debug
+    </h1>
+    <p class="text-sm leading-relaxed text-ng-text-muted">
+      Modifique o texto dentro do card e avance passo a passo para ver cada hook do Angular sendo executado ao lado.
+    </p>
+  </header>
+
+  <!-- Debugger Transport Bar -->
+  <section
+    aria-label="Controles de Depuração"
+    class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-ng-border bg-ng-surface p-3.5"
+  >
+    <!-- Active Cycle Step Pills -->
+    <div class="flex flex-wrap items-center gap-1.5">
+      @for (step of steps(); track step.hook; let i = $index) {
+        <button
+          type="button"
+          (click)="goToStep(i)"
+          [class]="
+            'ui-btn ui-pill flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-mono text-xs tabular-nums ' +
+            (i === stepIndex()
+              ? hookTheme(step.hook).badgeClasses + ' font-bold'
+              : i < stepIndex()
+                ? 'border-ng-border bg-ng-bg text-ng-text'
+                : 'border-ng-border/60 bg-ng-bg/50 text-ng-text-subtle hover:text-ng-text')
+          "
+        >
+          <span [class]="'h-2 w-2 rounded-full ' + hookTheme(step.hook).dotClass"></span>
+          <span>{{ i + 1 }}. {{ step.hook }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Step & Cycle Buttons -->
+    <div class="flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        [disabled]="stepIndex() === 0"
+        (click)="prev()"
+        class="ui-btn rounded-lg border border-ng-border bg-ng-bg px-3 py-1.5 text-xs font-medium text-ng-text hover:bg-ng-surface-hover disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        ◀ Anterior
+      </button>
+
+      <button
+        type="button"
+        (click)="togglePlay()"
+        class="ui-btn rounded-lg bg-ng-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-ng-primary-hover"
+      >
+        {{ isPlaying() ? '⏸ Pausar' : '▶ Play' }}
+      </button>
+
+      <button
+        type="button"
+        [disabled]="stepIndex() >= steps().length - 1"
+        (click)="next()"
+        class="ui-btn rounded-lg border border-ng-border bg-ng-bg px-3 py-1.5 text-xs font-medium text-ng-text hover:bg-ng-surface-hover disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Próximo ▶
+      </button>
+
+      <span class="hidden h-5 w-px bg-ng-border sm:inline-block"></span>
+
+      <button
+        type="button"
+        (click)="mount()"
+        class="ui-btn rounded-lg border border-ng-success/40 bg-ng-success/10 px-3 py-1.5 text-xs font-semibold text-ng-success hover:bg-ng-success/20"
+      >
+        Montar
+      </button>
+
+      <button
+        type="button"
+        [disabled]="!isMountedTarget()"
+        (click)="destroy()"
+        class="ui-btn rounded-lg border border-ng-error/40 bg-ng-error/10 px-3 py-1.5 text-xs font-semibold text-ng-error hover:bg-ng-error/20 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Destruir
+      </button>
+    </div>
+  </section>
+
+  <!-- Main Two-Column Debug Workspace -->
+  <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+    <!-- Left Column: Single Visual Card -->
+    <div class="space-y-4 lg:col-span-5">
+      <article
+        aria-label="Card de Demonstração"
+        [class]="
+          'ui-card-stage space-y-5 rounded-2xl border-2 p-6 ' +
+          currentTheme().cardClasses
+        "
+      >
+        <!-- Fixed Hook Color Header -->
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ng-border/60 pb-3">
+          <span
+            [class]="
+              'ui-pill inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-xs font-bold ' +
+              currentTheme().badgeClasses
+            "
+          >
+            <span [class]="'h-2.5 w-2.5 rounded-full ' + currentTheme().dotClass"></span>
+            {{ currentTheme().label }}
+          </span>
+
+          <span class="text-xs font-medium text-ng-text-muted">
+            {{ currentTheme().phaseLabel }}
+          </span>
+        </div>
+
+        <!-- DOM Display Area inside the Card -->
+        <div class="space-y-2 rounded-xl border border-ng-border bg-ng-surface/90 p-5">
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-ng-text-subtle">
+            Renderizado no DOM
+          </span>
+
+          @if (!current().mounted) {
+            <p class="text-lg font-semibold text-ng-text-muted">
+              @if (current().hook === 'ngOnDestroy') {
+                Instância destruída (removida do DOM)
+              } @else {
+                DOM ainda não montado...
+              }
+            </p>
+            @if (current().memoryText) {
+              <p class="text-xs text-ng-text-muted">
+                Valor em memória: <strong class="text-ng-text">"{{ current().memoryText }}"</strong>
+              </p>
+            }
+          } @else {
+            <p class="text-2xl font-bold tracking-tight text-ng-text">
+              {{ current().domText }}
+            </p>
+
+            @if (hasPendingChange()) {
+              <p class="rounded-lg border border-ng-warning/40 bg-ng-warning/10 px-3 py-1.5 text-xs text-ng-warning">
+                Na memória: <strong>"{{ current().memoryText }}"</strong> (aguardando ngAfterViewChecked)
+              </p>
+            }
+          }
+        </div>
+
+        <!-- Step Explanation -->
+        <p class="text-sm leading-relaxed text-ng-text">
+          {{ current().explanation }}
+        </p>
+
+        <!-- Editable Text Input Inside Card -->
+        <form
+          (submit)="updateText($event)"
+          class="border-t border-ng-border/60 pt-4"
+        >
+          <div class="flex gap-2">
+            <input
+              id="card-text-input"
+              type="text"
+              aria-label="Modificar texto do card"
+              [value]="draftText()"
+              (input)="onTextInput($event)"
+              [disabled]="!isMountedTarget()"
+              placeholder="Digite um novo texto..."
+              class="min-w-0 flex-1 rounded-lg border border-ng-border bg-ng-bg px-3 py-2 text-sm text-ng-text placeholder:text-ng-text-subtle focus:border-ng-primary focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+            />
+            <button
+              type="submit"
+              [disabled]="!isMountedTarget()"
+              class="ui-btn shrink-0 rounded-lg bg-ng-primary px-4 py-2 text-xs font-semibold text-white hover:bg-ng-primary-hover disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Atualizar
+            </button>
+          </div>
+        </form>
+      </article>
+    </div>
+
+    <!-- Right Column: Angular Component Code in Debug Mode -->
+    <section
+      aria-label="Código Angular em Modo Debug"
+      class="overflow-hidden rounded-2xl border border-ng-border bg-ng-code lg:col-span-7"
+    >
+      <div class="flex items-center justify-between border-b border-ng-border bg-ng-surface px-4 py-2.5">
+        <span class="font-mono text-sm font-semibold text-ng-text">
+          card-demo.component.ts
+        </span>
+        <span [class]="'inline-flex items-center gap-1.5 font-mono text-sm font-semibold ' + currentTheme().textClass">
+          <span [class]="'h-2 w-2 rounded-full ' + currentTheme().dotClass"></span>
+          Breakpoint: {{ currentTheme().label }}
+        </span>
+      </div>
+
+      <div class="space-y-1 overflow-x-auto p-4 font-mono text-sm leading-relaxed">
+        <!-- Component Decorator & Signal Input -->
+        <div class="px-3 py-1 text-ng-text-subtle">
+          <div><span class="text-ng-secondary">&#64;Component</span>(&#123; selector: <span class="text-ng-success">'app-card-demo'</span> &#125;)</div>
+          <div><span class="text-ng-secondary">export class</span> <span class="text-ng-info">CardDemoComponent</span> &#123;</div>
+          <div class="pl-4">
+            <span class="text-ng-secondary">readonly</span> texto =
+            <span class="text-ng-info">input</span>(<span class="text-ng-success">'{{ current().memoryText || current().domText || draftText() }}'</span>);
+          </div>
+        </div>
+
+        @for (block of codeBlocks; track block.id) {
+          <div
+            [class]="
+              'rounded-r-lg border-l-4 px-3 py-1.5 transition-colors duration-150 ' +
+              (current().hook === block.id
+                ? hookTheme(block.id).codeActiveClasses
+                : 'border-transparent opacity-45')
+            "
+          >
+            <div class="flex items-center gap-2">
+              <span
+                [class]="
+                  'w-3 text-center ' +
+                  (current().hook === block.id ? hookTheme(block.id).textClass : 'text-transparent')
+                "
+              >
+                ●
+              </span>
+              <span class="text-ng-info">{{ block.signature }}</span>
+              <span class="text-ng-text-subtle">&#123;</span>
+            </div>
+            <div class="pl-8 text-ng-text-subtle">{{ block.descriptionComment }}</div>
+            <div class="pl-8 text-ng-text-muted">{{ block.exampleLine }}</div>
+            @if (current().hook === block.id) {
+              <div [class]="'pl-8 text-xs font-semibold ' + hookTheme(block.id).textClass">
+                // [DEBUG] {{ current().debugLine }}
+              </div>
+            }
+            <div class="pl-5 text-ng-text-subtle">{{ block.closingBrace ?? '}' }}</div>
+          </div>
+        }
+
+        <div class="px-3 py-1 text-ng-text-subtle">&#125;</div>
+      </div>
+    </section>
+  </div>
+</div>
