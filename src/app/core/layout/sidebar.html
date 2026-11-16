@@ -1,0 +1,58 @@
+<aside
+  class="flex h-screen w-64 flex-col border-r border-ng-border bg-ng-surface text-ng-text"
+  aria-label="Menu Lateral"
+>
+  <!-- Header / Brand -->
+  <div class="flex items-center gap-3 border-b border-ng-border p-5">
+    <div
+      class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-ng-primary to-ng-secondary font-bold text-white shadow-md shadow-ng-primary/20"
+    >
+      <svg
+        class="h-6 w-6 fill-current"
+        viewBox="0 0 250 250"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <polygon points="125,30 125,30 125,30 31.9,63.2 46.1,186.3 125,230 125,230 125,230 203.9,186.3 218.1,63.2" fill="none" stroke="currentColor" stroke-width="12" />
+        <polygon points="125,52.1 66.8,182.6 90.6,182.6 102.3,153.3 147.7,153.3 159.4,182.6 183.2,182.6" fill="currentColor" />
+        <polygon points="125,97.5 111.4,130.6 138.6,130.6" fill="#181524" />
+      </svg>
+    </div>
+    <div>
+      <h1 class="text-base font-semibold tracking-tight text-ng-text">
+        Learn Angular
+      </h1>
+      <p class="text-xs text-ng-text-subtle">Hub de estudos & práticas</p>
+    </div>
+  </div>
+
+  <!-- Navigation Links -->
+  <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+    <div class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-ng-text-subtle">
+      Módulos
+    </div>
+
+    @for (item of navItems(); track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="bg-ng-surface-hover text-ng-primary border-ng-primary"
+        [routerLinkActiveOptions]="{ exact: !!item.exact }"
+        class="ui-btn group flex flex-col rounded-lg border-l-2 border-transparent px-3 py-2.5 text-sm font-medium text-ng-text-muted hover:bg-ng-surface-hover hover:text-ng-text"
+      >
+        <span class="flex items-center justify-between">
+          <span>{{ item.label }}</span>
+        </span>
+        @if (item.description) {
+          <span class="text-xs text-ng-text-subtle group-hover:text-ng-text-muted">
+            {{ item.description }}
+          </span>
+        }
+      </a>
+    }
+  </nav>
+
+  <!-- Footer Info -->
+  <div class="border-t border-ng-border p-4 text-xs text-ng-text-subtle">
+    <p class="font-medium text-ng-text-muted">Angular Moderno</p>
+    <p>Signals, Standalone & Tailwind</p>
+  </div>
+</aside>
