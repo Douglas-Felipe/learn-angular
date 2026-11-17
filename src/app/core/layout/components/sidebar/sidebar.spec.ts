@@ -25,4 +25,31 @@ describe('Sidebar', () => {
     expect(compiled.textContent).toContain('Home');
     expect(compiled.textContent).toContain('Lifecycle');
   });
+
+  it('should collapse and expand the sidebar when toggle button is clicked', () => {
+    const fixture = TestBed.createComponent(Sidebar);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const aside = compiled.querySelector('aside') as HTMLElement;
+    const toggleBtn = compiled.querySelector('[data-testid="sidebar-toggle"]') as HTMLButtonElement;
+
+    expect(aside.getAttribute('data-collapsed')).toBe('false');
+    expect(toggleBtn.getAttribute('aria-expanded')).toBe('true');
+    expect(compiled.textContent).toContain('Learn Angular');
+
+    toggleBtn.click();
+    fixture.detectChanges();
+
+    expect(aside.getAttribute('data-collapsed')).toBe('true');
+    expect(toggleBtn.getAttribute('aria-expanded')).toBe('false');
+    expect(compiled.textContent).not.toContain('Learn Angular');
+
+    toggleBtn.click();
+    fixture.detectChanges();
+
+    expect(aside.getAttribute('data-collapsed')).toBe('false');
+    expect(toggleBtn.getAttribute('aria-expanded')).toBe('true');
+    expect(compiled.textContent).toContain('Learn Angular');
+  });
 });
