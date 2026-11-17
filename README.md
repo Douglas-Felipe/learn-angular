@@ -1,47 +1,61 @@
 # Learn Angular 🚀
 
-> Um espaço técnico e interativo para estudar, revisar e inspecionar visualmente como o Angular funciona por debaixo dos panos — da instanciação em memória à pintura final no DOM do navegador.
+> Um laboratório interativo para aprender e dominar o Angular moderno em **câmera lenta** — visualizando passo a passo o que acontece por debaixo dos panos, do estado em memória até a renderização no navegador.
 
 🔗 **Acesse a aplicação online:** [https://douglas-felipe.github.io/learn-angular/](https://douglas-felipe.github.io/learn-angular/)
 
 ---
 
-## 📖 Sobre o Projeto
+## 📖 O que é o Learn Angular?
 
-Comportamentos essenciais do Angular acontecem em poucos milissegundos dentro do navegador, o que dificulta visualizar quando cada etapa do ciclo de vida é disparada e em que momento o DOM é efetivamente atualizado.
+Aprender Angular muitas vezes pode parecer lidar com uma "caixa preta": em uma aplicação real, eventos, reatividade, detecção de mudanças e renderizações acontecem em questão de milissegundos dentro do navegador. Quando algo se comporta de forma inesperada, é difícil discernir exatamente o que o framework está fazendo em cada instante.
 
-O **Learn Angular** desacelera esse fluxo, transformando o ciclo interno do framework em uma experiência visual passo a passo. O objetivo é ajudar desenvolvedores a construir um modelo mental sólido sobre reatividade, ordem de execução e sincronização entre memória e tela.
+O **Learn Angular** nasceu para transformar esse aprendizado em uma experiência tangível e visual. Em vez de apenas ler documentações teóricas, a plataforma permite **desacelerar o framework** e assistir a cada engrenagem funcionando no seu próprio ritmo, como se estivéssemos utilizando uma câmera de alta velocidade apontada para o runtime do Angular.
+
+O objetivo principal é ajudar desenvolvedores a construir um **modelo mental sólido**, entendendo com clareza:
+- Como e quando o framework processa estados e eventos;
+- A diferença exata entre os dados que residem em **memória** e o que está refletido no **DOM**;
+- Por que certos padrões de arquitetura funcionam melhor e quais armadilhas comuns evitar.
 
 ---
 
-## 🎯 Funcionalidades Interativas
+## 🧭 O Angular em Câmera Lenta
 
-### 1. Simulador de Ciclo de Vida (Lifecycle Debugger)
+A filosofia do site baseia-se em três pilares essenciais:
 
-Permite inspecionar a ordem exata de execução dos **11 hooks do Angular** em um componente prático de demonstração (`card-demo.component.ts`):
+1. **Depuração Visual e Interativa:** Controle total sobre o tempo da aplicação — avance passo a passo, pause a execução ou volte para estados anteriores para dissecar cada evento.
+2. **Memória vs. DOM:** Visualização simultânea do estado dos objetos em JavaScript e da árvore real de elementos HTML, tornando visível o momento exato em que a reconciliação e a pintura gráfica acontecem.
+3. **Inspeção de Código em Tempo Real:** Rastreamento lado a lado do código TypeScript/Template em execução e os efeitos gerados na interface.
 
-- **Fases do Ciclo:**
-  - **Criação (`constructor`)**: momento em que a instância da classe é alocada em memória, antes de receber `input()` ou existir qualquer nó HTML.
-  - **Entradas e Inicialização (`ngOnChanges`, `ngOnInit`, `ngDoCheck`)**: recepção do primeiro valor de `input()`, inicializações de lógica e checagem de mudanças.
-  - **Conteúdo Projetado (`ngAfterContentInit`, `ngAfterContentChecked`)**: inicialização e verificação de nós vinculados via `<ng-content>`.
-  - **Visualização do DOM (`ngAfterViewInit`, `ngAfterViewChecked`)**: instante em que o DOM próprio do componente é montado na tela e passa a exibir o texto renderizado.
-  - **Pintura no Navegador (`afterNextRender`, `afterEveryRender`)**: callbacks executados logo após o browser pintar os pixels na tela, indicados para manipulações diretas ou integração com bibliotecas externas.
-  - **Destruição (`ngOnDestroy`)**: fase de limpeza de timers e remoção do componente da árvore do DOM.
+---
 
-- **Diferenciação Visual entre Memória e DOM:**
-  - Ao digitar um novo texto no simulador e disparar a atualização, o sistema mostra o novo dado guardado em **memória** enquanto o **DOM** ainda exibe o valor antigo, revelando em qual hook específico a sincronização da View é concluída.
+## 🗺️ Módulos da Plataforma & Roadmap
 
-- **Árvore de Execução e Navegação Livre:**
-  - Um fluxograma oficial do ciclo do Angular permite visualizar subgrafos (*Creation*, *Change Detection*, *Content*, *View*, *Rendering* e *Destruction*).
-  - É possível clicar diretamente em qualquer hook do diagrama para saltar o estado do simulador até aquela etapa.
+A plataforma é modular e foi desenhada para cobrir os conceitos fundamentais e avançados do Angular:
 
-- **Inspeção de Código com Breakpoints:**
-  - Exibe o arquivo TypeScript do componente com a linha exata de depuração em destaque, mostrando parâmetros de entrada, valores de memória e estados de dirty check.
+### 🟢 Módulos Disponíveis
 
-- **Controles de Simulação:**
-  - **Passo a Passo**: botões para avançar (*Próximo hook*) ou voltar (*Hook anterior*).
-  - **Execução Automática**: botão *Play/Pausar* com transições temporizadas.
-  - **Ciclo Completo**: botões dedicados para *Montar* e *Destruir* o componente para inspecionar o comportamento de criação e descarte.
+* **Ciclo de Vida de Componentes (`/life-cycle`):**
+  O primeiro laboratório interativo da plataforma. Permite acompanhar em câmera lenta toda a linha do tempo de um componente — desde a alocação de memória no construtor, passando pela sincronização de inputs e projeção de conteúdo, até a montagem da view e o descarte final.
+
+### 🟡 O que está por vir (Roadmap Futuro)
+
+* **Detecção de Mudanças & Reatividade (Signals vs. Zone.js):**
+  Visualização em câmera lenta de como o Angular rastreia dependências e propaga notificações de mudanças — comparando o modelo de dirty-checking clássico com a reatividade cirúrgica e sem overhead dos Signals.
+* **Pipeline de Renderização & DOM:**
+  Inspeção desacelerada do processo de reconciliação, compilação de templates e o instante exato em que os novos hooks de renderização (`afterNextRender`, `afterEveryRender`) disparam após a pintura no browser.
+* **Injeção de Dependências (DI Tree):**
+  Navegação visual pela árvore hierárquica de injetores (Element Injector vs. Environment Injector), demonstrando a resolução de instâncias, escopos e ciclo de vida de serviços.
+* **Roteamento & Ciclo de Navegação:**
+  Simulação passo a passo da navegação: correspondência de URLs, execução de guards, carregamento de resolvers e ativação de rotas com lazy loading.
+
+---
+
+## 🛠️ Tecnologias
+
+- **[Angular](https://angular.dev/):** Standalone components, Signals, control flow e arquitetura moderna.
+- **[Tailwind CSS](https://tailwindcss.com/):** Estilização utilitária com design system consistente e responsivo.
+- **[Vitest](https://vitest.dev/):** Suíte rápida e moderna para testes automatizados unitários e de componentes.
 
 ---
 
@@ -52,7 +66,7 @@ Permite inspecionar a ordem exata de execução dos **11 hooks do Angular** em u
 - [Node.js](https://nodejs.org/) (versão `20.x` ou superior)
 - Gerenciador de pacotes `npm`
 
-### Execução
+### Instalação e Execução
 
 1. **Clone o repositório:**
    ```bash
@@ -65,10 +79,15 @@ Permite inspecionar a ordem exata de execução dos **11 hooks do Angular** em u
    npm install
    ```
 
-3. **Inicie o servidor local:**
+3. **Inicie o servidor de desenvolvimento:**
    ```bash
    npm start
    ```
 
 4. **Acesse no navegador:**
-   Abra [http://localhost:4200/](http://localhost:4200/) para interagir com a aplicação.
+   Abra [http://localhost:4200/](http://localhost:4200/) para explorar a aplicação.
+
+5. **Executar os testes:**
+   ```bash
+   npm test
+   ```
