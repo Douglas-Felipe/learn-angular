@@ -1,45 +1,66 @@
 <aside
-  class="flex h-screen w-64 flex-col border-r border-ng-border bg-ng-surface text-ng-text"
+  class="flex h-screen w-64 shrink-0 flex-col border-r border-ng-border bg-ng-surface text-ng-text"
   aria-label="Menu Lateral"
 >
   <!-- Header / Brand -->
-  <div class="flex items-center gap-3 border-b border-ng-border p-5">
+  <div class="flex h-16 items-center gap-3 border-b border-ng-border px-5">
     <div
-      class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-ng-primary to-ng-secondary font-bold text-white shadow-md shadow-ng-primary/20"
+      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-ng-border bg-ng-bg shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
     >
       <svg
-        class="h-6 w-6 fill-current"
-        viewBox="0 0 250 250"
+        class="h-5 w-5"
+        viewBox="0 0 223 236"
+        fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
-        <polygon points="125,30 125,30 125,30 31.9,63.2 46.1,186.3 125,230 125,230 125,230 203.9,186.3 218.1,63.2" fill="none" stroke="currentColor" stroke-width="12" />
-        <polygon points="125,52.1 66.8,182.6 90.6,182.6 102.3,153.3 147.7,153.3 159.4,182.6 183.2,182.6" fill="currentColor" />
-        <polygon points="125,97.5 111.4,130.6 138.6,130.6" fill="#181524" />
+        <defs>
+          <linearGradient id="ng-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F0060B" />
+            <stop offset="50%" stop-color="#CC26D5" />
+            <stop offset="100%" stop-color="#7702FF" />
+          </linearGradient>
+        </defs>
+        <path
+          fill="url(#ng-logo-grad)"
+          d="m222.077 39.192-8.019 125.923L137.387 0l84.69 39.192Zm-53.105 162.825-57.933 33.056-57.934-33.056 11.783-28.556h92.301l11.783 28.556ZM111.039 62.675l30.357 73.803H80.681l30.358-73.803ZM7.937 165.115 0 39.192 84.69 0 7.937 165.115Z"
+        />
       </svg>
     </div>
-    <div>
-      <h1 class="text-base font-semibold tracking-tight text-ng-text">
-        Learn Angular
-      </h1>
-      <p class="text-xs text-ng-text-subtle">Hub de estudos & práticas</p>
+    <div class="min-w-0 flex-1">
+      <div class="flex items-center gap-2">
+        <span class="truncate font-display text-sm font-semibold tracking-tight text-ng-text">
+          Learn Angular
+        </span>
+        <span
+          class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] font-medium text-ng-primary"
+        >
+          v22
+        </span>
+      </div>
+      <p class="truncate text-[11px] text-ng-text-subtle">Hub de estudos &amp; práticas</p>
     </div>
   </div>
 
   <!-- Navigation Links -->
-  <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-    <div class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-ng-text-subtle">
+  <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-5">
+    <div class="px-3 pb-2 font-mono text-[11px] font-medium uppercase tracking-wider text-ng-text-subtle">
       Módulos
     </div>
 
     @for (item of navItems(); track item.route) {
       <a
         [routerLink]="item.route"
-        routerLinkActive="bg-ng-surface-hover text-ng-primary border-ng-primary"
+        routerLinkActive="bg-ng-primary/10 text-ng-text border-ng-primary"
         [routerLinkActiveOptions]="{ exact: !!item.exact }"
-        class="ui-btn group flex flex-col rounded-lg border-l-2 border-transparent px-3 py-2.5 text-sm font-medium text-ng-text-muted hover:bg-ng-surface-hover hover:text-ng-text"
+        class="ui-btn group relative flex flex-col rounded border-l-2 border-transparent px-3 py-2.5 text-sm font-medium text-ng-text-muted hover:bg-ng-surface-hover hover:text-ng-text"
       >
-        <span class="flex items-center justify-between">
+        <span class="flex items-center justify-between gap-2">
           <span>{{ item.label }}</span>
+          <span
+            class="h-1.5 w-1.5 rounded-full bg-ng-primary opacity-0 transition-opacity group-hover:opacity-50"
+            aria-hidden="true"
+          ></span>
         </span>
         @if (item.description) {
           <span class="text-xs text-ng-text-subtle group-hover:text-ng-text-muted">
@@ -52,7 +73,8 @@
 
   <!-- Footer Info -->
   <div class="border-t border-ng-border p-4 text-xs text-ng-text-subtle">
-    <p class="font-medium text-ng-text-muted">Angular Moderno</p>
-    <p>Signals, Standalone & Tailwind</p>
+    <div class="mb-2 h-0.5 w-10 rounded-sm ng-gradient-bar"></div>
+    <p class="font-medium text-ng-text">Angular Moderno</p>
+    <p class="mt-0.5 font-mono text-[11px] text-ng-text-subtle">Signals • Standalone • Tailwind</p>
   </div>
 </aside>

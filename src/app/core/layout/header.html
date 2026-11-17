@@ -1,7 +1,13 @@
-<header class="flex h-16 shrink-0 items-center justify-between border-b border-ng-border bg-ng-surface px-6 md:px-8">
-  <h1 class="text-lg font-bold tracking-tight text-ng-text">
-    {{ pageTitle() }}
-  </h1>
+<header class="relative flex h-16 shrink-0 items-center justify-between border-b border-ng-border bg-ng-bg/85 px-6 backdrop-blur-md md:px-8">
+  <div class="ng-gradient-bar pointer-events-none absolute inset-x-0 top-0 h-[2px] opacity-85"></div>
+
+  <div class="flex items-center gap-2.5">
+    <span class="font-mono text-xs font-medium text-ng-text-subtle">Docs</span>
+    <span class="font-mono text-xs text-ng-border" aria-hidden="true">/</span>
+    <h1 class="font-display text-base font-semibold tracking-tight text-ng-text">
+      {{ pageTitle() }}
+    </h1>
+  </div>
 
   <a
     [href]="docsUrl()"
@@ -9,7 +15,7 @@
     rel="noopener noreferrer"
     aria-label="Documentação oficial do Angular"
     title="Documentação oficial do Angular"
-    class="ui-btn flex h-9 w-9 items-center justify-center rounded-full border border-ng-border bg-ng-bg font-mono text-sm font-bold text-ng-text-muted hover:border-ng-primary hover:text-ng-primary"
+    class="ui-btn flex h-9 w-9 items-center justify-center rounded border border-ng-border bg-ng-surface font-mono text-sm font-medium text-ng-text-muted shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] hover:border-ng-primary/60 hover:bg-ng-surface-hover hover:text-ng-text"
   >
     ?
   </a>
