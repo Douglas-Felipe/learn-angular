@@ -41,7 +41,9 @@ describe('LifeCycle', () => {
   it('should create paused at constructor() with purple theme, code usage examples, and no label or color name', () => {
     expect(component).toBeTruthy();
     const card = el().querySelector('article[aria-label="Card de Demonstração"]');
-    expect(card?.className).toContain('border-ng-secondary');
+    expect(card?.className).toContain('ng-card');
+    const domCard = el().querySelector('[data-testid="dom-render-card"]');
+    expect(domCard?.className).toContain('border-zinc-700');
     expect(card?.textContent).not.toContain('Roxo');
     expect(el().querySelector('label')).toBeNull();
     expect(el().querySelector('app-dom-tree')).toBeTruthy();
@@ -58,36 +60,67 @@ describe('LifeCycle', () => {
     expect(text()).toContain('DOM ainda não montado...');
   });
 
-  it('should step forward and backward and render DOM text through ngAfterViewInit() and afterRender hooks', () => {
-    clickButton('Próximo ▶');
+  it('should step through hooks using the execution tree nodes and render DOM text', () => {
+    // Jump to ngOnChanges via tree node click
+    const onChangesNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngOnChanges"]'
+    ) as HTMLButtonElement;
+    onChangesNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngOnChanges()');
-    expect(el().querySelector('article')?.className).toContain('border-ng-warning');
+    expect(el().querySelector('article')?.className).toContain('ng-card');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-zinc-700');
 
-    clickButton('◀ Anterior');
+    // Jump to step constructor
+    const constructorNode = el().querySelector(
+      'app-dom-tree button[data-hook="constructor"]'
+    ) as HTMLButtonElement;
+    constructorNode.click();
+    fixture.detectChanges();
     expect(el().querySelector('app-dom-tree')).toBeTruthy();
     expect(text()).toContain('Árvore de Execução & Mudança do DOM');
     expect(text()).toContain('Breakpoint: constructor()');
 
-    // Jump to step 5 (ngAfterContentInit)
-    clickButton('5. ngAfterContentInit');
+    // Jump to ngAfterContentInit
+    const contentInitNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngAfterContentInit"]'
+    ) as HTMLButtonElement;
+    contentInitNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngAfterContentInit()');
-    expect(el().querySelector('article')?.className).toContain('border-ng-accent');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-zinc-700');
     expect(text()).toContain('DOM ainda não montado...');
 
-    // Jump to step 7 (ngAfterViewInit) via pill
-    clickButton('7. ngAfterViewInit');
+    // Jump to ngAfterViewInit
+    const viewInitNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngAfterViewInit"]'
+    ) as HTMLButtonElement;
+    viewInitNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngAfterViewInit()');
-    expect(el().querySelector('article')?.className).toContain('border-ng-success');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-success');
     expect(text()).toContain('Olá, Angular!');
 
-    // Step through ngAfterViewChecked -> afterNextRender -> afterEveryRender
-    clickButton('Próximo ▶');
+    // Step through ngAfterViewChecked -> afterNextRender -> afterEveryRender via tree
+    const viewCheckedNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngAfterViewChecked"]'
+    ) as HTMLButtonElement;
+    viewCheckedNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngAfterViewChecked()');
 
-    clickButton('Próximo ▶');
+    const nextRenderNode = el().querySelector(
+      'app-dom-tree button[data-hook="afterNextRender"]'
+    ) as HTMLButtonElement;
+    nextRenderNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: afterNextRender()');
 
-    clickButton('Próximo ▶');
+    const everyRenderNode = el().querySelector(
+      'app-dom-tree button[data-hook="afterEveryRender"]'
+    ) as HTMLButtonElement;
+    everyRenderNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: afterEveryRender()');
   });
 
@@ -101,24 +134,41 @@ describe('LifeCycle', () => {
     expect(text()).toContain('Breakpoint: ngOnChanges()');
     expect(text()).toContain('Olá, Angular!');
     expect(text()).toContain('Na memória: "Signals em Ação"');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-white');
 
-    clickButton('Próximo ▶');
+    const doCheckNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngDoCheck"]'
+    ) as HTMLButtonElement;
+    doCheckNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngDoCheck()');
-    expect(el().querySelector('article')?.className).toContain('border-ng-primary');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-white');
     expect(text()).toContain('DOM: "Olá, Angular!" → Pendente: "Signals em Ação"');
 
-    clickButton('Próximo ▶');
+    const contentCheckedNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngAfterContentChecked"]'
+    ) as HTMLButtonElement;
+    contentCheckedNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngAfterContentChecked()');
-    expect(el().querySelector('article')?.className).toContain('border-ng-accent');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-white');
     expect(text()).toContain('Na memória: "Signals em Ação"');
 
-    clickButton('Próximo ▶');
+    const viewCheckedNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngAfterViewChecked"]'
+    ) as HTMLButtonElement;
+    viewCheckedNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngAfterViewChecked()');
-    expect(el().querySelector('article')?.className).toContain('border-ng-success');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-success');
     expect(text()).not.toContain('aguardando ngAfterViewChecked');
     expect(text()).toContain('DOM sincronizado: "Signals em Ação"');
 
-    clickButton('Próximo ▶');
+    const everyRenderNode = el().querySelector(
+      'app-dom-tree button[data-hook="afterEveryRender"]'
+    ) as HTMLButtonElement;
+    everyRenderNode.click();
+    fixture.detectChanges();
     expect(text()).toContain('Breakpoint: afterEveryRender()');
     expect(text()).toContain('Signals em Ação');
 
@@ -134,7 +184,7 @@ describe('LifeCycle', () => {
   it('should destroy with red ngOnDestroy state and remount via Montar', () => {
     clickButton('Destruir');
     expect(text()).toContain('Breakpoint: ngOnDestroy()');
-    expect(el().querySelector('article')?.className).toContain('border-ng-error');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-error');
     expect(text()).toContain('Instância destruída (removida do DOM)');
 
     clickButton('Montar');
@@ -143,32 +193,58 @@ describe('LifeCycle', () => {
     expect(text()).toContain('Breakpoint: constructor()');
   });
 
-  it('should play and pause debugger automatically', () => {
+  it('should play, pause, step forward and backward inside demo card', () => {
     vi.useFakeTimers();
 
-    clickButton('▶ Play');
-    expect(text()).toContain('⏸ Pausar');
+    clickButton('Play');
+    expect(text()).toContain('Pausar');
 
     vi.advanceTimersByTime(1100);
     fixture.detectChanges();
     expect(text()).toContain('Breakpoint: ngOnChanges()');
 
-    clickButton('⏸ Pausar');
-    expect(text()).toContain('▶ Play');
+    clickButton('Pausar');
+    expect(text()).toContain('Play');
+
+    clickButton('Próximo hook');
+    expect(text()).toContain('Breakpoint: ngOnInit()');
+
+    clickButton('Hook anterior');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
   });
 
-  it('should copy debug code snippet from card-demo.component.ts header', () => {
+  it('should auto-stop timer when reaching the last step during playback and reset to step 0 if restarted', () => {
     vi.useFakeTimers();
-    const copyBtn = el().querySelector('[data-testid="copy-debug-code-btn"]') as HTMLButtonElement;
-    expect(copyBtn).toBeTruthy();
-    expect(copyBtn.textContent).toContain('Copiar');
 
-    copyBtn.click();
+    // Advance to last step
+    const everyRenderNode = el().querySelector(
+      'app-dom-tree button[data-hook="afterEveryRender"]'
+    ) as HTMLButtonElement;
+    everyRenderNode.click();
     fixture.detectChanges();
-    expect(copyBtn.textContent).toContain('Copiado!');
+    expect(text()).toContain('Breakpoint: afterEveryRender()');
 
-    vi.advanceTimersByTime(1800);
+    // Starting play at last step resets to step 0
+    clickButton('Play');
+    expect(text()).toContain('Breakpoint: constructor()');
+    expect(text()).toContain('Pausar');
+
+    // Fast-forward until all remaining steps complete
+    vi.advanceTimersByTime(1100 * 10);
     fixture.detectChanges();
-    expect(copyBtn.textContent).toContain('Copiar');
+    expect(text()).toContain('Breakpoint: afterEveryRender()');
+    expect(text()).toContain('Play');
+  });
+
+  it('should ignore text updates and destroy actions when already unmounted', () => {
+    clickButton('Destruir');
+    expect(text()).toContain('Breakpoint: ngOnDestroy()');
+
+    // Trying to submit or destroy when unmounted
+    const form = el().querySelector('form');
+    form?.dispatchEvent(new Event('submit'));
+    (component as unknown as { destroy: () => void }).destroy();
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngOnDestroy()');
   });
 });

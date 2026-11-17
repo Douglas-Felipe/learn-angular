@@ -116,52 +116,52 @@ export interface DebugStep {
 
 const THEME_PALETTE = {
   secondary: {
-    cardClasses: 'border-ng-secondary bg-ng-secondary/10',
-    badgeClasses: 'border-ng-secondary/70 bg-ng-secondary/25 text-ng-text',
+    cardClasses: 'border-ng-secondary bg-ng-secondary/15',
+    badgeClasses: 'border-2 border-ng-secondary bg-ng-secondary/25 text-ng-secondary',
     dotClass: 'bg-ng-secondary',
-    codeActiveClasses: 'border-ng-secondary bg-ng-secondary/15 opacity-100',
+    codeActiveClasses: 'border-ng-secondary bg-ng-secondary/20 opacity-100',
     textClass: 'text-ng-secondary',
   },
   warning: {
-    cardClasses: 'border-ng-warning bg-ng-warning/10',
-    badgeClasses: 'border-ng-warning/70 bg-ng-warning/25 text-ng-text',
+    cardClasses: 'border-ng-warning bg-ng-warning/15',
+    badgeClasses: 'border-2 border-ng-warning bg-ng-warning/25 text-ng-warning',
     dotClass: 'bg-ng-warning',
-    codeActiveClasses: 'border-ng-warning bg-ng-warning/15 opacity-100',
+    codeActiveClasses: 'border-ng-warning bg-ng-warning/20 opacity-100',
     textClass: 'text-ng-warning',
   },
   info: {
-    cardClasses: 'border-ng-info bg-ng-info/10',
-    badgeClasses: 'border-ng-info/70 bg-ng-info/25 text-ng-text',
+    cardClasses: 'border-ng-info bg-ng-info/15',
+    badgeClasses: 'border-2 border-ng-info bg-ng-info/25 text-ng-info',
     dotClass: 'bg-ng-info',
-    codeActiveClasses: 'border-ng-info bg-ng-info/15 opacity-100',
+    codeActiveClasses: 'border-ng-info bg-ng-info/20 opacity-100',
     textClass: 'text-ng-info',
   },
   primary: {
-    cardClasses: 'border-ng-primary bg-ng-primary/10',
-    badgeClasses: 'border-ng-primary/70 bg-ng-primary/25 text-ng-text',
+    cardClasses: 'border-ng-primary bg-ng-primary/15',
+    badgeClasses: 'border-2 border-ng-primary bg-ng-primary/25 text-ng-primary',
     dotClass: 'bg-ng-primary',
-    codeActiveClasses: 'border-ng-primary bg-ng-primary/15 opacity-100',
+    codeActiveClasses: 'border-ng-primary bg-ng-primary/20 opacity-100',
     textClass: 'text-ng-primary',
   },
   accent: {
-    cardClasses: 'border-ng-accent bg-ng-accent/10',
-    badgeClasses: 'border-ng-accent/70 bg-ng-accent/25 text-ng-text',
+    cardClasses: 'border-ng-accent bg-ng-accent/15',
+    badgeClasses: 'border-2 border-ng-accent bg-ng-accent/25 text-ng-accent',
     dotClass: 'bg-ng-accent',
-    codeActiveClasses: 'border-ng-accent bg-ng-accent/15 opacity-100',
+    codeActiveClasses: 'border-ng-accent bg-ng-accent/20 opacity-100',
     textClass: 'text-ng-accent',
   },
   success: {
-    cardClasses: 'border-ng-success bg-ng-success/10',
-    badgeClasses: 'border-ng-success/70 bg-ng-success/25 text-ng-text',
+    cardClasses: 'border-ng-success bg-ng-success/15',
+    badgeClasses: 'border-2 border-ng-success bg-ng-success/25 text-ng-success',
     dotClass: 'bg-ng-success',
-    codeActiveClasses: 'border-ng-success bg-ng-success/15 opacity-100',
+    codeActiveClasses: 'border-ng-success bg-ng-success/20 opacity-100',
     textClass: 'text-ng-success',
   },
   error: {
-    cardClasses: 'border-ng-error bg-ng-error/10',
-    badgeClasses: 'border-ng-error/70 bg-ng-error/25 text-ng-text',
+    cardClasses: 'border-ng-error bg-ng-error/15',
+    badgeClasses: 'border-2 border-ng-error bg-ng-error/25 text-ng-error',
     dotClass: 'bg-ng-error',
-    codeActiveClasses: 'border-ng-error bg-ng-error/15 opacity-100',
+    codeActiveClasses: 'border-ng-error bg-ng-error/20 opacity-100',
     textClass: 'text-ng-error',
   },
 } as const;
@@ -402,14 +402,12 @@ function buildDestroySteps(prevText: string): DebugStep[] {
 export class LifeCycle {
   private readonly destroyRef = inject(DestroyRef);
   private timerId: ReturnType<typeof setInterval> | null = null;
-  private copyTimerId: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly codeBlocks = HOOK_CODE_BLOCKS;
   protected readonly steps = signal<DebugStep[]>(buildMountSteps('Olá, Angular!'));
   protected readonly stepIndex = signal(0);
   protected readonly isPlaying = signal(false);
   protected readonly draftText = signal('Olá, Angular!');
-  protected readonly isCodeCopied = signal(false);
 
   protected readonly current = computed(() => this.steps()[this.stepIndex()]);
   protected readonly currentTheme = computed(() => HOOK_THEMES[this.current().hook]);
@@ -422,33 +420,36 @@ export class LifeCycle {
     const step = this.current();
     return step.mounted && step.memoryText !== step.domText;
   });
+  protected readonly domCardClasses = computed(() => {
+    const step = this.current();
+    if (step.hook === 'ngOnDestroy') {
+      return {
+        card: 'border-ng-error bg-ng-error/15',
+        title: 'text-ng-error',
+      };
+    }
+    if (!step.mounted) {
+      return {
+        card: 'border-zinc-300 dark:border-zinc-700 bg-transparent text-zinc-600 dark:text-zinc-400',
+        title: 'text-zinc-600 dark:text-zinc-400',
+      };
+    }
+    if (this.hasPendingChange()) {
+      return {
+        card: 'border-white bg-white text-zinc-950 shadow-md',
+        title: 'text-zinc-950',
+      };
+    }
+    return {
+      card: 'border-ng-success bg-ng-success/15',
+      title: 'text-ng-success',
+    };
+  });
 
   constructor() {
     this.destroyRef.onDestroy(() => {
       this.stopTimer();
-      this.stopCopyTimer();
     });
-  }
-
-  protected copyDebugCode(): void {
-    const active = this.current();
-    const snippet = `@Component({ selector: 'app-card-demo' })\nexport class CardDemoComponent {\n  readonly texto = input('${active.memoryText || active.domText || this.draftText()}');\n  // Active Breakpoint: ${active.hook} -> ${active.debugLine}\n}`;
-    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-      void navigator.clipboard.writeText(snippet).catch(() => undefined);
-    }
-    this.isCodeCopied.set(true);
-    this.stopCopyTimer();
-    this.copyTimerId = setTimeout(() => {
-      this.isCodeCopied.set(false);
-      this.copyTimerId = null;
-    }, 1800);
-  }
-
-  private stopCopyTimer(): void {
-    if (this.copyTimerId !== null) {
-      clearTimeout(this.copyTimerId);
-      this.copyTimerId = null;
-    }
   }
 
   protected hookTheme(id: HookId): HookTheme {
