@@ -44,6 +44,8 @@ describe('LifeCycle', () => {
     expect(card?.className).toContain('border-ng-secondary');
     expect(card?.textContent).not.toContain('Roxo');
     expect(el().querySelector('label')).toBeNull();
+    expect(el().querySelector('app-dom-tree')).toBeTruthy();
+    expect(text()).toContain('Árvore de Execução & Mudança do DOM');
     expect(text()).toContain('Breakpoint: constructor()');
     expect(text()).toContain("readonly texto = input(");
     expect(text()).toContain('// Injetar serviços e dependências');
@@ -62,6 +64,8 @@ describe('LifeCycle', () => {
     expect(el().querySelector('article')?.className).toContain('border-ng-warning');
 
     clickButton('◀ Anterior');
+    expect(el().querySelector('app-dom-tree')).toBeTruthy();
+    expect(text()).toContain('Árvore de Execução & Mudança do DOM');
     expect(text()).toContain('Breakpoint: constructor()');
 
     // Jump to step 5 (ngAfterContentInit)
@@ -101,6 +105,7 @@ describe('LifeCycle', () => {
     clickButton('Próximo ▶');
     expect(text()).toContain('Breakpoint: ngDoCheck()');
     expect(el().querySelector('article')?.className).toContain('border-ng-primary');
+    expect(text()).toContain('DOM: "Olá, Angular!" → Pendente: "Signals em Ação"');
 
     clickButton('Próximo ▶');
     expect(text()).toContain('Breakpoint: ngAfterContentChecked()');
@@ -111,11 +116,19 @@ describe('LifeCycle', () => {
     expect(text()).toContain('Breakpoint: ngAfterViewChecked()');
     expect(el().querySelector('article')?.className).toContain('border-ng-success');
     expect(text()).not.toContain('aguardando ngAfterViewChecked');
-    expect(text()).toContain('Signals em Ação');
+    expect(text()).toContain('DOM sincronizado: "Signals em Ação"');
 
     clickButton('Próximo ▶');
     expect(text()).toContain('Breakpoint: afterEveryRender()');
     expect(text()).toContain('Signals em Ação');
+
+    // Jump via tree node click back to ngOnChanges
+    const onChangesNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngOnChanges"]'
+    ) as HTMLButtonElement;
+    onChangesNode.click();
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
   });
 
   it('should destroy with red ngOnDestroy state and remount via Montar', () => {
@@ -125,6 +138,8 @@ describe('LifeCycle', () => {
     expect(text()).toContain('Instância destruída (removida do DOM)');
 
     clickButton('Montar');
+    expect(el().querySelector('app-dom-tree')).toBeTruthy();
+    expect(text()).toContain('Árvore de Execução & Mudança do DOM');
     expect(text()).toContain('Breakpoint: constructor()');
   });
 

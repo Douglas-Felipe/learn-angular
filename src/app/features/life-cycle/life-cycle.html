@@ -175,6 +175,15 @@
           </div>
         </form>
       </article>
+
+      <app-dom-tree
+        [hook]="current().hook"
+        [mounted]="current().mounted"
+        [domText]="current().domText"
+        [memoryText]="current().memoryText"
+        [cycleHooks]="cycleHookIds()"
+        (selectHook)="goToHook($event)"
+      />
     </div>
 
     <!-- Right Column: Angular Component Code in Debug Mode -->

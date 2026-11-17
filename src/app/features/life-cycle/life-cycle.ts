@@ -1,4 +1,5 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { DomTree } from './components/dom-tree/dom-tree';
 
 export type HookId =
   | 'constructor'
@@ -394,7 +395,7 @@ function buildDestroySteps(prevText: string): DebugStep[] {
 }
 
 @Component({
-  imports: [],
+  imports: [DomTree],
   selector: 'app-life-cycle',
   templateUrl: './life-cycle.html',
 })
@@ -410,6 +411,7 @@ export class LifeCycle {
 
   protected readonly current = computed(() => this.steps()[this.stepIndex()]);
   protected readonly currentTheme = computed(() => HOOK_THEMES[this.current().hook]);
+  protected readonly cycleHookIds = computed(() => this.steps().map((s) => s.hook));
   protected readonly isMountedTarget = computed(() => {
     const list = this.steps();
     return list[list.length - 1]?.mounted ?? false;
@@ -494,6 +496,13 @@ export class LifeCycle {
     this.stopTimer();
     if (index >= 0 && index < this.steps().length) {
       this.stepIndex.set(index);
+    }
+  }
+
+  protected goToHook(id: HookId): void {
+    const idx = this.steps().findIndex((s) => s.hook === id);
+    if (idx !== -1) {
+      this.goToStep(idx);
     }
   }
 
