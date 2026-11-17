@@ -1,41 +1,47 @@
 # Learn Angular 🚀
 
-> Um espaço interativo e visual para estudar e inspecionar como o Angular moderno funciona por debaixo dos panos — da instanciação em memória à pintura final no DOM do navegador.
+> Um espaço técnico e interativo para estudar, revisar e inspecionar visualmente como o Angular funciona por debaixo dos panos — da instanciação em memória à pintura final no DOM do navegador.
 
 🔗 **Acesse a aplicação online:** [https://douglas-felipe.github.io/learn-angular/](https://douglas-felipe.github.io/learn-angular/)
 
 ---
 
-## 📖 Visão Geral
+## 📖 Sobre o Projeto
 
-O **Learn Angular** desacelera comportamentos que ocorrem em milissegundos no navegador para você depurar visualmente cada etapa da reatividade e renderização do framework. É ideal tanto para quem está construindo seu modelo mental do Angular moderno quanto para quem deseja revisar nuances arquiteturais no dia a dia.
+Comportamentos essenciais do Angular acontecem em poucos milissegundos dentro do navegador, o que dificulta visualizar quando cada etapa do ciclo de vida é disparada e em que momento o DOM é efetivamente atualizado.
 
-### 🌟 Destaques & Funcionalidades
-
-- **Simulador de Ciclo de Vida (Lifecycle Debugger)**:
-  - Navegue passo a passo pelos 11 hooks oficiais do Angular (`constructor()`, `ngOnChanges()`, `ngOnInit()`, `ngDoCheck()`, `ngAfterContentInit()`, `ngAfterContentChecked()`, `ngAfterViewInit()`, `ngAfterViewChecked()`, `afterNextRender()`, `afterEveryRender()` e `ngOnDestroy()`).
-  - Inspeção ao vivo do valor mantido **em memória** versus o que já foi **sincronizado no DOM**.
-  - Árvore de execução interativa conectando subgrafos de *Creation*, *Change Detection*, *Content Projection*, *View DOM*, *Rendering* e *Destruction*.
-  - Painel de código `card-demo.component.ts` com breakpoints e contexto de execução em tempo real.
-  - Controles de reprodução automática (*Play/Pausar*), navegação manual (*Próximo/Anterior*) e simulação de montagem/destruição de instâncias.
-- **Design System Alinhado ao angular.dev**:
-  - Tema escuro por padrão com suporte a alternância Dark/Light.
-  - Tipografia otimizada com `Inter` e `JetBrains Mono`.
-  - Botões estilo *cyber* com microinterações fluidas e contraste aprimorado.
-- **Arquitetura Moderna**:
-  - Angular v22+, Standalone Components por padrão e Signals para gerenciamento de estado reativo.
-  - Suíte de testes automatizados com Vitest atingindo **≥ 90% de cobertura**.
-  - Pipeline de CI/CD automatizada para deploy contínuo no GitHub Pages.
+O **Learn Angular** desacelera esse fluxo, transformando o ciclo interno do framework em uma experiência visual passo a passo. O objetivo é ajudar desenvolvedores a construir um modelo mental sólido sobre reatividade, ordem de execução e sincronização entre memória e tela.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🎯 Funcionalidades Interativas
 
-- **Framework**: [Angular 22](https://angular.dev/)
-- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
-- **Estilização**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Testes Unitários**: [Vitest](https://vitest.dev/) + [@vitest/coverage-v8](https://vitest.dev/guide/coverage.html)
-- **CI/CD**: GitHub Actions + GitHub Pages
+### 1. Simulador de Ciclo de Vida (Lifecycle Debugger)
+
+Permite inspecionar a ordem exata de execução dos **11 hooks do Angular** em um componente prático de demonstração (`card-demo.component.ts`):
+
+- **Fases do Ciclo:**
+  - **Criação (`constructor`)**: momento em que a instância da classe é alocada em memória, antes de receber `input()` ou existir qualquer nó HTML.
+  - **Entradas e Inicialização (`ngOnChanges`, `ngOnInit`, `ngDoCheck`)**: recepção do primeiro valor de `input()`, inicializações de lógica e checagem de mudanças.
+  - **Conteúdo Projetado (`ngAfterContentInit`, `ngAfterContentChecked`)**: inicialização e verificação de nós vinculados via `<ng-content>`.
+  - **Visualização do DOM (`ngAfterViewInit`, `ngAfterViewChecked`)**: instante em que o DOM próprio do componente é montado na tela e passa a exibir o texto renderizado.
+  - **Pintura no Navegador (`afterNextRender`, `afterEveryRender`)**: callbacks executados logo após o browser pintar os pixels na tela, indicados para manipulações diretas ou integração com bibliotecas externas.
+  - **Destruição (`ngOnDestroy`)**: fase de limpeza de timers e remoção do componente da árvore do DOM.
+
+- **Diferenciação Visual entre Memória e DOM:**
+  - Ao digitar um novo texto no simulador e disparar a atualização, o sistema mostra o novo dado guardado em **memória** enquanto o **DOM** ainda exibe o valor antigo, revelando em qual hook específico a sincronização da View é concluída.
+
+- **Árvore de Execução e Navegação Livre:**
+  - Um fluxograma oficial do ciclo do Angular permite visualizar subgrafos (*Creation*, *Change Detection*, *Content*, *View*, *Rendering* e *Destruction*).
+  - É possível clicar diretamente em qualquer hook do diagrama para saltar o estado do simulador até aquela etapa.
+
+- **Inspeção de Código com Breakpoints:**
+  - Exibe o arquivo TypeScript do componente com a linha exata de depuração em destaque, mostrando parâmetros de entrada, valores de memória e estados de dirty check.
+
+- **Controles de Simulação:**
+  - **Passo a Passo**: botões para avançar (*Próximo hook*) ou voltar (*Hook anterior*).
+  - **Execução Automática**: botão *Play/Pausar* com transições temporizadas.
+  - **Ciclo Completo**: botões dedicados para *Montar* e *Destruir* o componente para inspecionar o comportamento de criação e descarte.
 
 ---
 
@@ -43,10 +49,10 @@ O **Learn Angular** desacelera comportamentos que ocorrem em milissegundos no na
 
 ### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) versão `20.x` ou `22.x` (LTS recomendado)
+- [Node.js](https://nodejs.org/) (versão `20.x` ou superior)
 - Gerenciador de pacotes `npm`
 
-### Passo a Passo
+### Execução
 
 1. **Clone o repositório:**
    ```bash
@@ -59,40 +65,10 @@ O **Learn Angular** desacelera comportamentos que ocorrem em milissegundos no na
    npm install
    ```
 
-3. **Inicie o servidor de desenvolvimento:**
+3. **Inicie o servidor local:**
    ```bash
    npm start
    ```
 
 4. **Acesse no navegador:**
-   Abra [http://localhost:4200/](http://localhost:4200/) para explorar a aplicação. As alterações no código serão recarregadas automaticamente.
-
----
-
-## 🧪 Testes e Cobertura
-
-O projeto adota a pirâmide de testes e exige alta cobertura de código em toda a lógica de domínio:
-
-```bash
-# Executa todos os testes unitários uma vez
-npm test -- --watch=false
-
-# Executa testes gerando relatório detalhado de cobertura (V8)
-npm test -- --coverage --watch=false
-```
-
----
-
-## 🚀 Build e Deploy
-
-Para gerar o build otimizado de produção:
-
-```bash
-# Build padrão
-npm run build
-
-# Build configurado para GitHub Pages (com base-href)
-npx ng build --base-href /learn-angular/
-```
-
-As alterações enviadas para a branch `main` que afetem o código-fonte executam a pipeline em `.github/workflows/deploy.yml` e são publicadas automaticamente no GitHub Pages.
+   Abra [http://localhost:4200/](http://localhost:4200/) para interagir com a aplicação.
