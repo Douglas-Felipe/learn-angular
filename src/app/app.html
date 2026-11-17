@@ -1,6 +1,9 @@
 <div class="flex h-screen w-screen overflow-hidden bg-ng-bg text-ng-text">
   <app-sidebar />
-  <main class="flex-1 overflow-y-auto p-6 md:p-8">
-    <router-outlet />
-  </main>
+  <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+    <app-header />
+    <main class="flex-1 overflow-y-auto p-6 md:p-8">
+      <router-outlet />
+    </main>
+  </div>
 </div>
