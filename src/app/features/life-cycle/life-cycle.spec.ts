@@ -243,8 +243,21 @@ describe('LifeCycle', () => {
     // Trying to submit or destroy when unmounted
     const form = el().querySelector('form');
     form?.dispatchEvent(new Event('submit'));
-    (component as unknown as { destroy: () => void }).destroy();
+    const internal = component as unknown as {
+      destroy: () => void;
+      prev: () => void;
+      next: () => void;
+      goToHook: (id: string) => void;
+      draftText: { set: (val: string) => void };
+      mount: () => void;
+    };
+    internal.destroy();
+    internal.prev();
+    internal.next();
+    internal.goToHook('constructor');
+    internal.draftText.set('   ');
+    internal.mount();
     fixture.detectChanges();
-    expect(text()).toContain('Breakpoint: ngOnDestroy()');
+    expect(text()).toContain('Breakpoint: constructor()');
   });
 });
