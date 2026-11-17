@@ -1,10 +1,10 @@
 <section
   aria-label="Diagrama em Árvore do Ciclo de Vida e DOM"
-  class="ng-card ui-card-stage space-y-4 rounded-md p-5"
+  class="ng-card ng-card-interactive ui-card-stage space-y-4 p-5"
 >
   <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ng-border pb-3">
     <div>
-      <h2 class="font-display text-sm font-semibold tracking-tight text-ng-text">
+      <h2 class="display-title text-sm font-semibold text-ng-text">
         Árvore de Execução &amp; Mudança do DOM
       </h2>
       <p class="text-xs text-ng-text-muted">
@@ -14,7 +14,7 @@
 
     <span
       [class]="
-        'ui-pill inline-flex items-center gap-1.5 rounded border px-2.5 py-0.5 font-mono text-xs font-semibold ' +
+        'ui-pill inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-0.5 font-mono text-xs font-semibold ' +
         activeMeta().activeClasses
       "
     >
@@ -34,27 +34,27 @@
       [disabled]="status === 'skipped'"
       (click)="onSelectNode(id)"
       [class]="
-        'ui-btn ui-pill flex w-full max-w-[230px] items-center justify-between gap-2 rounded border px-3 py-2 text-left ' +
+        'ui-btn ui-pill flex w-full max-w-[260px] items-center justify-between gap-2 rounded-lg border px-3.5 py-2.5 text-left ' +
         (status === 'active'
           ? meta.activeClasses
           : status === 'completed'
-            ? 'border-ng-border bg-ng-bg text-ng-text hover:border-ng-text-subtle hover:bg-ng-surface-hover'
+            ? 'border-ng-border bg-ng-bg text-ng-text hover:border-ng-purple/60 hover:bg-ng-surface-hover'
             : status === 'skipped'
-              ? 'cursor-not-allowed border-dashed border-ng-border/60 bg-ng-bg/40 text-ng-text-subtle opacity-35'
-              : 'border-ng-border bg-ng-bg/80 text-ng-text-muted hover:border-ng-text-subtle hover:bg-ng-surface-hover')
+              ? 'cursor-not-allowed border-dashed border-ng-border/70 bg-ng-bg/50 text-ng-text-muted opacity-50'
+              : 'border-ng-border bg-ng-bg text-ng-text hover:border-ng-purple/50 hover:bg-ng-surface-hover')
       "
     >
       <span class="min-w-0">
-        <span class="flex items-center gap-1.5 font-mono text-xs font-semibold">
-          <span [class]="'h-2 w-2 shrink-0 rounded-full ' + meta.dotClass"></span>
+        <span class="flex items-center gap-2 font-mono text-sm font-semibold text-ng-text">
+          <span [class]="'h-2.5 w-2.5 shrink-0 rounded-full ' + meta.dotClass"></span>
           <span class="truncate">{{ meta.label }}</span>
         </span>
-        <span class="block pl-3.5 text-[10px] text-ng-text-subtle">
+        <span class="block pl-4 text-xs font-medium text-ng-text-muted">
           {{ meta.subLabel }}
         </span>
       </span>
 
-      <span class="shrink-0 font-mono text-[11px]">
+      <span class="shrink-0 font-mono text-xs font-bold">
         @switch (status) {
           @case ('active') {
             <span [class]="'font-bold ' + meta.textClass">●</span>
@@ -73,7 +73,7 @@
   <!-- Official Angular Execution Order Tree Diagram -->
   <div class="flex flex-col items-center">
     <!-- Phase 1: Creation Root -->
-    <div class="mb-1.5 font-mono text-[10px] font-medium uppercase tracking-wider text-ng-text-subtle">
+    <div class="mb-1.5 font-mono text-[11px] font-medium text-ng-text-subtle">
       Creation
     </div>
     <ng-container *ngTemplateOutlet="hookNode; context: { id: 'constructor' }" />
@@ -85,9 +85,9 @@
     <!-- Phase 2: Change Detection Subgraph -->
     <div
       aria-label="Subgrafo Change Detection"
-      class="mt-1 flex w-full flex-col items-center rounded-md border border-dashed border-ng-border bg-ng-bg/60 p-3.5"
+      class="mt-1 flex w-full flex-col items-center rounded-xl border border-dashed border-ng-border bg-ng-bg/60 p-3.5"
     >
-      <div class="mb-2.5 self-start rounded border border-ng-border bg-ng-surface px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-ng-text-muted">
+      <div class="mb-2.5 self-start rounded-lg border border-ng-border bg-ng-surface px-2.5 py-0.5 font-mono text-[11px] font-medium text-ng-text-muted">
         Change Detection
       </div>
 
@@ -110,7 +110,7 @@
       <div class="grid w-full grid-cols-2 gap-3">
         <!-- Left Branch: Content Projection -->
         <div class="flex flex-col items-center">
-          <span class="mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-ng-accent">
+          <span class="mb-1.5 font-mono text-[11px] font-semibold text-ng-accent">
             Content
           </span>
           <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngAfterContentInit' }" />
@@ -120,7 +120,7 @@
 
         <!-- Right Branch: View DOM -->
         <div class="flex flex-col items-center">
-          <span class="mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-ng-success">
+          <span class="mb-1.5 font-mono text-[11px] font-semibold text-ng-success">
             View
           </span>
           <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngAfterViewInit' }" />
@@ -143,15 +143,15 @@
     <!-- Phase 3: Rendering (DOM & Browser Paint) -->
     <div
       aria-label="Subgrafo Rendering"
-      class="mt-1 flex w-full flex-col items-center rounded-md border border-ng-border bg-ng-bg/60 p-3.5"
+      class="mt-1 flex w-full flex-col items-center rounded-xl border border-ng-border bg-ng-bg/60 p-3.5"
     >
       <div class="mb-2.5 flex w-full flex-wrap items-center justify-between gap-2">
-        <span class="rounded border border-ng-border bg-ng-surface px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-ng-text-muted">
+        <span class="rounded-lg border border-ng-border bg-ng-surface px-2.5 py-0.5 font-mono text-[11px] font-medium text-ng-text-muted">
           Rendering (DOM)
         </span>
         <span
           [class]="
-            'ui-pill rounded border px-2.5 py-0.5 font-mono text-[11px] font-medium ' +
+            'ui-pill rounded-lg border px-2.5 py-0.5 font-mono text-[11px] font-medium ' +
             domStageSummary().badgeClass
           "
         >
@@ -168,7 +168,7 @@
     <!-- Phase 4: Destruction -->
     <div class="h-4 border-l-2 border-dashed border-ng-border"></div>
     <div class="text-[10px] leading-none text-ng-text-subtle">▼</div>
-    <div class="mb-1.5 mt-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-ng-error">
+    <div class="mb-1.5 mt-1 font-mono text-[11px] font-semibold text-ng-error">
       Destruction
     </div>
     <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngOnDestroy' }" />

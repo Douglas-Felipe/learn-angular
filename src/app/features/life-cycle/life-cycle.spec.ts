@@ -156,4 +156,19 @@ describe('LifeCycle', () => {
     clickButton('⏸ Pausar');
     expect(text()).toContain('▶ Play');
   });
+
+  it('should copy debug code snippet from card-demo.component.ts header', () => {
+    vi.useFakeTimers();
+    const copyBtn = el().querySelector('[data-testid="copy-debug-code-btn"]') as HTMLButtonElement;
+    expect(copyBtn).toBeTruthy();
+    expect(copyBtn.textContent).toContain('Copiar');
+
+    copyBtn.click();
+    fixture.detectChanges();
+    expect(copyBtn.textContent).toContain('Copiado!');
+
+    vi.advanceTimersByTime(1800);
+    fixture.detectChanges();
+    expect(copyBtn.textContent).toContain('Copiar');
+  });
 });
