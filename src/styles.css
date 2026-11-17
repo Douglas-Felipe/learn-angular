@@ -2,52 +2,92 @@
 
 @theme {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Inter Tight', 'Inter', system-ui, sans-serif;
-  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --color-ng-bg: #0f0f11;
-  --color-ng-surface: #16161a;
-  --color-ng-surface-hover: #201f27;
-  --color-ng-code: #111115;
-  --color-ng-border: #282730;
+  --color-ng-surface: #18181b;
+  --color-ng-sidebar: #18181b;
+  --color-ng-surface-hover: #222227;
+  --color-ng-code: #121215;
+  --color-ng-border: rgba(255, 255, 255, 0.08);
 
-  --color-ng-primary: #f637e3;
-  --color-ng-primary-hover: #ff5ce8;
-  --color-ng-secondary: #a855f7;
+  --color-ng-purple: #a855f7;
+  --color-ng-crimson: #ff3355;
+
+  --color-ng-primary: #ff4d6d;
+  --color-ng-primary-hover: #ff6b86;
+  --color-ng-secondary: #c084fc;
   --color-ng-accent: #f472b6;
 
-  --color-ng-text: #fbfbfb;
-  --color-ng-text-muted: #a6a2ae;
-  --color-ng-text-subtle: #787480;
+  --color-ng-text: #ffffff;
+  --color-ng-text-muted: #d4d4d8;
+  --color-ng-text-subtle: #a1a1aa;
 
-  --color-ng-success: #2dd4bf;
+  --color-ng-success: #34d399;
   --color-ng-warning: #fbbf24;
-  --color-ng-error: #fb7185;
+  --color-ng-error: #ff5c77;
   --color-ng-info: #60a5fa;
 }
 
-:root {
+:root,
+html.dark {
+  color-scheme: dark;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
-  --orange-red: oklch(63.32% 0.24 31.68);
-  --hot-red: oklch(61.42% 0.238 15.34);
-  --vivid-pink: oklch(69.02% 0.277 332.77);
-  --electric-violet: oklch(53.18% 0.28 296.97);
-  --french-violet: oklch(47.66% 0.246 305.88);
-  --bright-blue: oklch(51.01% 0.274 263.83);
+  --color-ng-bg: #0f0f11;
+  --color-ng-surface: #18181b;
+  --color-ng-sidebar: #18181b;
+  --color-ng-surface-hover: #242429;
+  --color-ng-code: #121215;
+  --color-ng-border: rgba(255, 255, 255, 0.12);
+  --color-ng-border-hover: rgba(168, 85, 247, 0.55);
+  --color-ng-header-bg: rgba(15, 15, 17, 0.75);
 
-  --red-to-pink-to-purple-horizontal-gradient: linear-gradient(
-    90deg,
-    var(--orange-red) 0%,
-    var(--vivid-pink) 50%,
-    var(--electric-violet) 100%
-  );
-  --pink-to-purple-horizontal-gradient: linear-gradient(
-    90deg,
-    var(--vivid-pink) 0%,
-    var(--electric-violet) 100%
-  );
+  --color-ng-purple: #a855f7;
+  --color-ng-crimson: #ff3355;
+  --color-ng-primary: #ff4d6d;
+  --color-ng-primary-hover: #ff6b86;
+  --color-ng-secondary: #c084fc;
+  --color-ng-accent: #f472b6;
+
+  --color-ng-text: #ffffff;
+  --color-ng-text-muted: #d4d4d8;
+  --color-ng-text-subtle: #a1a1aa;
+
+  --ng-signature-gradient: linear-gradient(135deg, #f0060b 0%, #cc26d5 50%, #7702ff 100%);
+  --red-to-pink-to-purple-horizontal-gradient: var(--ng-signature-gradient);
+  --pink-to-purple-horizontal-gradient: var(--ng-signature-gradient);
+}
+
+html.light,
+html:not(.dark) {
+  color-scheme: light;
+  --color-ng-bg: #ffffff;
+  --color-ng-surface: #ffffff;
+  --color-ng-sidebar: #f8f9fa;
+  --color-ng-surface-hover: #f1f3f5;
+  --color-ng-code: #f8f9fa;
+  --color-ng-border: #d4d4d8;
+  --color-ng-border-hover: rgba(133, 20, 245, 0.45);
+  --color-ng-header-bg: rgba(255, 255, 255, 0.8);
+
+  --color-ng-purple: #7c3aed;
+  --color-ng-crimson: #dd0031;
+  --color-ng-primary: #c8002b;
+  --color-ng-primary-hover: #dd0031;
+  --color-ng-secondary: #6d28d9;
+  --color-ng-accent: #be185d;
+
+  --color-ng-text: #0f0f11;
+  --color-ng-text-muted: #3f3f46;
+  --color-ng-text-subtle: #52525b;
+
+  --color-ng-success: #047857;
+  --color-ng-warning: #b45309;
+  --color-ng-error: #be123c;
+  --color-ng-info: #1d4ed8;
 }
 
 @layer base {
@@ -55,39 +95,126 @@
     background-color: var(--color-ng-bg);
     color: var(--color-ng-text);
     font-family: var(--font-sans);
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
   }
 
   h1,
   h2,
-  h3 {
+  h3,
+  .display-title {
     font-family: var(--font-display);
+    letter-spacing: -0.03em;
+  }
+
+  code,
+  pre,
+  kbd {
+    font-family: var(--font-mono);
   }
 }
 
 @layer components {
   .ng-gradient-text {
-    background: var(--red-to-pink-to-purple-horizontal-gradient);
+    background: var(--ng-signature-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
   .ng-gradient-bar {
-    background: var(--red-to-pink-to-purple-horizontal-gradient);
+    background: var(--ng-signature-gradient);
   }
 
   .ng-gradient-btn {
-    background: var(--pink-to-purple-horizontal-gradient);
+    background: var(--ng-signature-gradient);
     color: #ffffff;
-    border: 1px solid oklch(69.02% 0.277 332.77 / 0.45);
-    box-shadow: 0 1px 14px -3px oklch(53.18% 0.28 296.97 / 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+  }
+
+  .ng-pill-cta {
+    background: var(--ng-signature-gradient);
+    color: #ffffff;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition:
+      transform 160ms var(--ease-out),
+      opacity 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .ng-glass-header {
+    background-color: var(--color-ng-header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-ng-border);
+  }
+
+  .ng-sidebar-surface {
+    background-color: var(--color-ng-sidebar);
+    border-right: 1px solid var(--color-ng-border);
   }
 
   .ng-card {
+    border-radius: 12px;
     border: 1px solid var(--color-ng-border);
     background-color: var(--color-ng-surface);
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .ng-card-interactive:hover {
+    border-color: var(--color-ng-border-hover);
+  }
+
+  .ng-code-container {
+    border-radius: 12px;
+    border: 1px solid var(--color-ng-border);
+    background-color: var(--color-ng-code);
+    overflow: hidden;
+    transition: border-color 180ms ease;
+  }
+
+  .ng-code-container:hover {
+    border-color: var(--color-ng-border-hover);
+  }
+
+  .ng-active-glow {
+    position: relative;
+    border-color: var(--color-ng-purple);
+    box-shadow: 0 0 0 1px rgba(133, 20, 245, 0.25);
+  }
+
+  .ng-ambient-glow {
+    background: radial-gradient(
+      circle at 50% 0%,
+      rgba(240, 6, 11, 0.14) 0%,
+      rgba(204, 38, 213, 0.12) 45%,
+      rgba(119, 2, 255, 0.1) 75%,
+      transparent 100%
+    );
+    filter: blur(120px);
+    opacity: 0.55;
+  }
+
+  html.light .ng-ambient-glow,
+  html:not(.dark) .ng-ambient-glow {
+    opacity: 0.28;
+  }
+
+  .ng-link {
+    color: var(--color-ng-purple);
+    transition: color 150ms ease;
+  }
+
+  .ng-link:hover,
+  .ng-link-active {
+    color: var(--color-ng-crimson);
   }
 }
 
@@ -97,6 +224,7 @@ button:not(:disabled),
 }
 
 .ui-btn {
+  border-radius: 8px;
   transition:
     transform 160ms var(--ease-out),
     background-color 150ms ease,
@@ -105,12 +233,14 @@ button:not(:disabled),
     opacity 150ms ease;
 }
 
-.ui-btn:active:not(:disabled) {
+.ui-btn:active:not(:disabled),
+.ng-pill-cta:active:not(:disabled) {
   transform: scale(0.97);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .ui-btn:hover:not(:disabled) {
+  .ui-btn:hover:not(:disabled),
+  .ng-pill-cta:hover:not(:disabled) {
     filter: brightness(1.06);
   }
 }
@@ -134,7 +264,7 @@ button:not(:disabled),
 
   @starting-style {
     opacity: 0;
-    transform: scale(0.96) translateY(6px);
+    transform: scale(0.98) translateY(4px);
   }
 }
 
@@ -150,28 +280,13 @@ button:not(:disabled),
 
   @starting-style {
     opacity: 0;
-    transform: scale(0.96) translateY(6px);
+    transform: scale(0.98) translateY(4px);
   }
 }
 
-.ui-item-card:nth-child(1) {
-  transition-delay: 0ms, 0ms, 0ms, 0ms, 0ms;
-}
-
-.ui-item-card:nth-child(2) {
-  transition-delay: 40ms, 40ms, 0ms, 0ms, 0ms;
-}
-
-.ui-item-card:nth-child(3) {
-  transition-delay: 75ms, 75ms, 0ms, 0ms, 0ms;
-}
-
-.ui-item-card:nth-child(4) {
-  transition-delay: 105ms, 105ms, 0ms, 0ms, 0ms;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .ui-btn:active:not(:disabled) {
+  .ui-btn:active:not(:disabled),
+  .ng-pill-cta:active:not(:disabled) {
     transform: none;
   }
 
@@ -188,8 +303,7 @@ button:not(:disabled),
       opacity 180ms ease,
       border-color 180ms ease,
       background-color 180ms ease,
-      color 180ms ease;
-    transition-delay: 0ms;
+      color 150ms ease;
 
     @starting-style {
       opacity: 0;
