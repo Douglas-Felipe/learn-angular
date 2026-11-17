@@ -1,6 +1,6 @@
-import { Routes } from '@angular/router';
+import { AppRoute } from '@routing';
 
-export const routes: Routes = [
+export const routes: AppRoute[] = [
   {
     path: '',
     loadComponent: () => import('./features/home/home').then((m) => m.Home),
