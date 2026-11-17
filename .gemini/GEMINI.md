@@ -57,3 +57,13 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the `providedIn: 'root'` option for singleton services
 - Prefer the `@Service` decorator over `@Injectable({providedIn: 'root'})` for new singleton services (Angular v22+)
 - Use the `inject()` function instead of constructor injection
+
+## Design System & UI Standards (angular.dev)
+
+- Follow the official **angular.dev** dark-mode aesthetic defined in `src/styles.css`:
+  - **Surfaces & Borders**: Use `bg-ng-bg` (`#0f0f11`), `bg-ng-surface` (`#16161a`), `bg-ng-code` (`#111115`), and `border-ng-border` (`#282730`), leveraging `.ng-card`, `.ng-gradient-text`, `.ng-gradient-bar`, and `.ng-gradient-btn`.
+  - **Typography**: Use `font-sans` (`Inter`) for body/UI copy, `font-display` (`Inter Tight`) for headings (`h1`–`h3`), and `font-mono` (`DM Mono`) for code snippets, lifecycle hooks, and technical badges.
+  - **Border Radius**: Keep border radii tight and geometric to match `angular.dev`:
+    - Use `rounded-md` (`6px`) for cards, panels, subgraphs, and code blocks.
+    - Use `rounded` (`4px`) for buttons, inputs, step pills, badges, and navigation links (`rounded-sm` for thin decorative bars or tree connectors).
+    - Reserve `rounded-full` strictly for small circular status/indicator dots (`h-1.5` to `h-2.5`). Do NOT use `rounded-lg`, `rounded-xl`, `rounded-2xl`, or pill-shaped `rounded-full` on buttons, badges, or containers.
