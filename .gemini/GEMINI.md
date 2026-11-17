@@ -60,10 +60,13 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 
 ## Design System & UI Standards (angular.dev)
 
-- Follow the official **angular.dev** dark-mode aesthetic defined in `src/styles.css`:
-  - **Surfaces & Borders**: Use `bg-ng-bg` (`#0f0f11`), `bg-ng-surface` (`#16161a`), `bg-ng-code` (`#111115`), and `border-ng-border` (`#282730`), leveraging `.ng-card`, `.ng-gradient-text`, `.ng-gradient-bar`, and `.ng-gradient-btn`.
-  - **Typography**: Use `font-sans` (`Inter`) for body/UI copy, `font-display` (`Inter Tight`) for headings (`h1`–`h3`), and `font-mono` (`DM Mono`) for code snippets, lifecycle hooks, and technical badges.
-  - **Border Radius**: Keep border radii tight and geometric to match `angular.dev`:
-    - Use `rounded-md` (`6px`) for cards, panels, subgraphs, and code blocks.
-    - Use `rounded` (`4px`) for buttons, inputs, step pills, badges, and navigation links (`rounded-sm` for thin decorative bars or tree connectors).
-    - Reserve `rounded-full` strictly for small circular status/indicator dots (`h-1.5` to `h-2.5`). Do NOT use `rounded-lg`, `rounded-xl`, `rounded-2xl`, or pill-shaped `rounded-full` on buttons, badges, or containers.
+- Follow the **angular.dev** Developer Experience (DX) and technical documentation design system defined in `src/styles.css`:
+  - **Theme & Surfaces**: Default to Dark Mode using deep obsidian backgrounds (`#0F0F11`), elevated charcoal cards (`#18181B`), and glassmorphic sticky headers (`rgba(15, 15, 17, 0.75)` with `backdrop-filter: blur(12px)` via `.ng-glass-header`). Support Light Mode with `#FFFFFF` backgrounds and `#F8F9FA` sidebars (`.ng-sidebar-surface`).
+  - **Color Accents**: Use the signature gradient (`linear-gradient(135deg, #F0060B 0%, #CC26D5 50%, #7702FF 100%)`) sparingly for hero keyword highlights (`.ng-gradient-text` with `background-clip: text`), primary pill CTAs (`.ng-pill-cta`), and active border glows (`.ng-active-glow`). Use electric purple (`#8514F5`) and crimson (`#DD0031`) for active states and links.
+  - **Borders & Depth**: Avoid heavy drop shadows. Define hierarchy with crisp `1px solid` subtle borders (`rgba(255, 255, 255, 0.08)` in dark mode, `#E4E4E7` in light mode) and soft ambient radial background glows (`blur(120px)`, low opacity via `.ng-ambient-glow`).
+  - **Typography**: Use `Inter` (`font-sans` / `font-display`) for UI and headings with tight `-0.03em` tracking (`.display-title`) on display titles and `1.65` line-height on body text. Use `JetBrains Mono` (`font-mono`) for code blocks, CLI commands, keyboard shortcuts, and technical badges.
+  - **Components & Geometry**:
+    - Use `12px` border-radius (`rounded-xl`, `.ng-card`, `.ng-code-container`) for cards and code containers with subtle border-color transitions on hover (`.ng-card-interactive`).
+    - Use `8px` border-radius (`rounded-lg`, `.ui-btn`) for standard buttons, inputs, and navigation links.
+    - Use `9999px` pill shape (`rounded-full`, `.ng-pill-cta`) for primary hero/transport CTAs and small circular status dots.
+    - Include file-name headers and copy buttons on interactive code blocks.
