@@ -6,6 +6,9 @@ describe('Header', () => {
     await TestBed.configureTestingModule({
       imports: [Header],
     }).compileComponents();
+
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
   });
 
   it('should render default title and docs link when no inputs are provided', () => {
@@ -34,5 +37,24 @@ describe('Header', () => {
 
     const docsLink = compiled.querySelector('a');
     expect(docsLink?.getAttribute('href')).toBe('https://angular.dev/guide/components/lifecycle');
+  });
+
+  it('should toggle between Dark Mode and Light Mode on documentElement', () => {
+    const fixture = TestBed.createComponent(Header);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const themeBtn = compiled.querySelector('[data-testid="theme-toggle"]') as HTMLButtonElement;
+    expect(themeBtn).toBeTruthy();
+
+    themeBtn.click();
+    fixture.detectChanges();
+    expect(document.documentElement.classList.contains('light')).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+    themeBtn.click();
+    fixture.detectChanges();
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(document.documentElement.classList.contains('light')).toBe(false);
   });
 });
