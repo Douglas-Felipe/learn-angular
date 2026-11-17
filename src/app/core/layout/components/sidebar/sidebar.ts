@@ -1,12 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
-export interface NavItem {
-  label: string;
-  route: string;
-  exact?: boolean;
-  description?: string;
-}
+import { NavItem } from './interfaces/nav-item.interface';
 
 @Component({
   selector: 'app-sidebar',
