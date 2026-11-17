@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import type { HookId } from '../../life-cycle';
+import type { HookId } from '../../interfaces/life-cycle.interface';
 import { DomTree } from './dom-tree';
 
 describe('DomTree', () => {
