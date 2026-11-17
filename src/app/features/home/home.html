@@ -1,46 +1,13 @@
 <section class="ui-card-stage mx-auto max-w-4xl space-y-10 py-6">
   <!-- Hero Section -->
-  <header class="space-y-5 border-b border-ng-border pb-8">
-    <div class="inline-flex items-center gap-2 rounded-lg border border-ng-border bg-ng-surface px-3 py-1 font-mono text-xs font-medium text-ng-text-muted">
-      <span class="ng-gradient-bar h-2 w-2 rounded-full" aria-hidden="true"></span>
-      <span>angular.dev • v22.2 DX</span>
-    </div>
-
+  <header class="space-y-5 border-b border-ng-border pb-8 text-center">
     <h1 class="display-title max-w-3xl text-balance text-4xl font-bold sm:text-5xl lg:text-6xl">
-      Arquitetura interativa para <span class="ng-gradient-text">Learn Angular</span>
+      Veja como o <span class="ng-gradient-text">Angular</span> funciona por debaixo dos panos
     </h1>
 
     <p class="max-w-[65ch] text-base leading-[1.65] text-ng-text-muted sm:text-lg">
-      Um espaço técnico para estudar, revisar e inspecionar visualmente como o Angular funciona por debaixo dos panos — da instanciação em memória à pintura final no DOM.
+      Explore o Angular moderno em câmera lenta. Visualize etapa por etapa como o framework gerencia eventos, mudanças e a renderização na tela.
     </p>
-
-    <!-- Hero Actions: Pill CTA (9999px) + Interactive CLI Command -->
-    <div class="flex flex-wrap items-center gap-3.5 pt-2">
-      <a
-        routerLink="/life-cycle"
-        data-testid="hero-cta"
-        class="ng-pill-cta inline-flex items-center gap-2.5 px-6 py-2.5 text-sm font-semibold"
-      >
-        <span>Explorar Ciclo de Vida</span>
-        <span class="font-mono text-xs opacity-90" aria-hidden="true">→</span>
-      </a>
-
-      <div
-        class="inline-flex items-center gap-3 rounded-lg border border-ng-border bg-ng-code px-3.5 py-2 font-mono text-xs text-ng-text-muted"
-      >
-        <span class="select-none text-ng-purple">$</span>
-        <code class="text-ng-text">{{ cliCommand }}</code>
-        <button
-          type="button"
-          data-testid="copy-cli-btn"
-          (click)="copyCli()"
-          aria-label="Copiar comando CLI"
-          class="ui-btn rounded-lg border border-ng-border bg-ng-surface px-2.5 py-1 font-mono text-[11px] font-medium text-ng-text-muted hover:border-ng-purple/50 hover:text-ng-text"
-        >
-          {{ isCliCopied() ? 'Copiado!' : 'Copiar' }}
-        </button>
-      </div>
-    </div>
   </header>
 
   <!-- Architectural Context Card -->
@@ -57,22 +24,8 @@
     </h2>
 
     <p class="text-ng-text">
-      Este projeto reúne conceitos essenciais do Angular de forma prática e visual, transformando comportamentos que acontecem em milissegundos no navegador em demonstrações passo a passo fáceis de acompanhar.
+      Comportamentos que levam milissegundos no navegador, desacelerados para você depurar visualmente. Ideal para construir seu modelo mental do zero ou validar nuances de reatividade e renderização no dia a dia..
     </p>
-
-    <p>
-      A proposta é servir tanto para quem está aprendendo quanto para revisões rápidas sobre o funcionamento interno do framework, como ciclo de vida, detecção de mudanças e atualização do DOM.
-    </p>
-
-    <div class="border-t border-ng-border pt-4">
-      <a
-        routerLink="/life-cycle"
-        class="ng-link inline-flex items-center gap-2 font-mono text-xs font-medium"
-      >
-        <span>Abrir depurador de hooks</span>
-        <span aria-hidden="true">→</span>
-      </a>
-    </div>
   </div>
 
   <!-- Execution Pipeline Sequence Cards (12px radius + hover border transition) -->
