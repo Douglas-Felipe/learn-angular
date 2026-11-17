@@ -1,18 +1,23 @@
-<section class="ui-card-stage mx-auto max-w-3xl space-y-6 py-4">
-  <header class="space-y-2 border-b border-ng-border pb-4">
-    <span class="text-xs font-semibold uppercase tracking-wider text-ng-primary">
+<section class="ui-card-stage mx-auto max-w-4xl space-y-8 py-6">
+  <header class="space-y-4 border-b border-ng-border pb-6">
+    <span
+      class="inline-flex items-center gap-2 rounded border border-ng-border bg-ng-surface px-3 py-1 font-mono text-xs font-medium text-ng-text-muted shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+    >
+      <span class="ng-gradient-bar h-2 w-2 rounded-full" aria-hidden="true"></span>
       Visão Geral
     </span>
-    <h1 class="text-balance text-3xl font-bold tracking-tight text-ng-text">
-      Learn Angular
+
+    <h1 class="font-display text-balance text-4xl font-bold tracking-tight sm:text-5xl">
+      <span class="ng-gradient-text">Learn Angular</span>
     </h1>
-    <p class="text-balance text-base leading-relaxed text-ng-text-muted">
+
+    <p class="max-w-2xl text-balance text-base leading-relaxed text-ng-text-muted sm:text-lg">
       Um espaço para estudar, revisar e visualizar como o Angular funciona por debaixo dos panos.
     </p>
   </header>
 
-  <div class="ui-card-stage space-y-4 rounded-2xl border border-ng-border bg-ng-surface p-6 text-sm leading-relaxed text-ng-text-muted">
-    <p>
+  <div class="ng-card ui-card-stage space-y-4 rounded-md p-6 text-sm leading-relaxed text-ng-text-muted sm:p-7">
+    <p class="text-ng-text">
       Este projeto reúne conceitos essenciais do Angular de forma prática e visual, transformando comportamentos que
       acontecem em milissegundos no navegador em demonstrações passo a passo fáceis de acompanhar.
     </p>
@@ -20,8 +25,53 @@
       A proposta é servir tanto para quem está aprendendo quanto para revisões rápidas sobre o funcionamento interno do
       framework, como ciclo de vida, detecção de mudanças e atualização do DOM.
     </p>
-    <p class="text-ng-text-subtle">
+    <p class="font-mono text-xs text-ng-text-subtle">
       Utilize o menu lateral para navegar pelos tópicos disponíveis.
     </p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <article class="ng-card ui-item-card space-y-2.5 rounded-md p-5">
+      <span
+        class="inline-flex items-center rounded border border-ng-primary/30 bg-ng-primary/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-primary"
+      >
+        01 • Hooks
+      </span>
+      <h2 class="font-display text-base font-semibold tracking-tight text-ng-text">
+        Ciclo de Vida
+      </h2>
+      <p class="text-xs leading-relaxed text-ng-text-muted">
+        Acompanhe a ordem exata de execução desde o <code class="font-mono text-ng-text">constructor()</code> até a
+        limpeza final em <code class="font-mono text-ng-text">ngOnDestroy()</code>.
+      </p>
+    </article>
+
+    <article class="ng-card ui-item-card space-y-2.5 rounded-md p-5">
+      <span
+        class="inline-flex items-center rounded border border-ng-secondary/30 bg-ng-secondary/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-secondary"
+      >
+        02 • State
+      </span>
+      <h2 class="font-display text-base font-semibold tracking-tight text-ng-text">
+        Detecção de Mudanças
+      </h2>
+      <p class="text-xs leading-relaxed text-ng-text-muted">
+        Compare o estado em memória com o template verificado durante cada ciclo de atualização de inputs.
+      </p>
+    </article>
+
+    <article class="ng-card ui-item-card space-y-2.5 rounded-md p-5">
+      <span
+        class="inline-flex items-center rounded border border-ng-success/30 bg-ng-success/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-success"
+      >
+        03 • Browser
+      </span>
+      <h2 class="font-display text-base font-semibold tracking-tight text-ng-text">
+        Renderização &amp; DOM
+      </h2>
+      <p class="text-xs leading-relaxed text-ng-text-muted">
+        Visualize em qual momento a View é montada e quando os callbacks pós-pintura disparam no navegador.
+      </p>
+    </article>
   </div>
 </section>
