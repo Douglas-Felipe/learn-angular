@@ -1,0 +1,176 @@
+<section
+  aria-label="Diagrama em Árvore do Ciclo de Vida e DOM"
+  class="ng-card ng-card-interactive ui-card-stage space-y-4 p-5"
+>
+  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ng-border pb-3">
+    <div>
+      <h2 class="display-title text-sm font-semibold text-ng-text">
+        Árvore de Execução &amp; Mudança do DOM
+      </h2>
+      <p class="text-xs text-ng-text-muted">
+        Fluxo oficial do Angular sincronizado com o breakpoint atual
+      </p>
+    </div>
+
+    <span
+      [class]="
+        'ui-pill inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-0.5 font-mono text-xs font-semibold ' +
+        activeMeta().activeClasses
+      "
+    >
+      <span [class]="'h-2 w-2 rounded-full ' + activeMeta().dotClass"></span>
+      {{ activeMeta().label }}
+    </span>
+  </div>
+
+  <!-- Reusable Flowchart Node Template -->
+  <ng-template #hookNode let-id="id">
+    @let meta = nodeMeta(id);
+    @let status = nodeStatus(id);
+    <button
+      type="button"
+      [attr.data-hook]="id"
+      [attr.data-status]="status"
+      [disabled]="status === 'skipped'"
+      (click)="onSelectNode(id)"
+      [class]="
+        'ui-btn ui-pill flex w-full max-w-[260px] items-center justify-between gap-2 rounded-lg border px-3.5 py-2.5 text-left ' +
+        (status === 'active'
+          ? meta.activeClasses
+          : status === 'completed'
+            ? 'border-ng-border bg-ng-bg text-ng-text hover:border-ng-purple/60 hover:bg-ng-surface-hover'
+            : status === 'skipped'
+              ? 'cursor-not-allowed border-dashed border-ng-border/70 bg-ng-bg/50 text-ng-text-muted opacity-50'
+              : 'border-ng-border bg-ng-bg text-ng-text hover:border-ng-purple/50 hover:bg-ng-surface-hover')
+      "
+    >
+      <span class="min-w-0">
+        <span class="flex items-center gap-2 font-mono text-sm font-semibold text-ng-text">
+          <span [class]="'h-2.5 w-2.5 shrink-0 rounded-full ' + meta.dotClass"></span>
+          <span class="truncate">{{ meta.label }}</span>
+        </span>
+        <span class="block pl-4 text-xs font-medium text-ng-text-muted">
+          {{ meta.subLabel }}
+        </span>
+      </span>
+
+      <span class="shrink-0 font-mono text-xs font-bold">
+        @switch (status) {
+          @case ('active') {
+            <span [class]="'font-bold ' + meta.textClass">●</span>
+          }
+          @case ('completed') {
+            <span class="text-ng-success">✓</span>
+          }
+          @case ('skipped') {
+            <span class="text-ng-text-subtle">—</span>
+          }
+        }
+      </span>
+    </button>
+  </ng-template>
+
+  <!-- Official Angular Execution Order Tree Diagram -->
+  <div class="flex flex-col items-center">
+    <!-- Phase 1: Creation Root -->
+    <div class="mb-1.5 font-mono text-[11px] font-medium text-ng-text-subtle">
+      Creation
+    </div>
+    <ng-container *ngTemplateOutlet="hookNode; context: { id: 'constructor' }" />
+
+    <!-- Connector into Change Detection -->
+    <div class="h-4 w-0.5 bg-ng-border"></div>
+    <div class="text-[10px] leading-none text-ng-text-subtle">▼</div>
+
+    <!-- Phase 2: Change Detection Subgraph -->
+    <div
+      aria-label="Subgrafo Change Detection"
+      class="mt-1 flex w-full flex-col items-center rounded-xl border border-dashed border-ng-border bg-ng-bg/60 p-3.5"
+    >
+      <div class="mb-2.5 self-start rounded-lg border border-ng-border bg-ng-surface px-2.5 py-0.5 font-mono text-[11px] font-medium text-ng-text-muted">
+        Change Detection
+      </div>
+
+      <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngOnChanges' }" />
+      <div class="h-3 w-0.5 bg-ng-border"></div>
+
+      <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngOnInit' }" />
+      <div class="h-3 w-0.5 bg-ng-border"></div>
+
+      <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngDoCheck' }" />
+
+      <!-- Fork Connector: ngDoCheck -> Content (Left) & View (Right) -->
+      <div class="h-3 w-0.5 bg-ng-border"></div>
+      <div class="grid w-full grid-cols-2">
+        <div class="ml-[50%] h-3 rounded-tl-sm border-l-2 border-t-2 border-ng-border"></div>
+        <div class="mr-[50%] h-3 rounded-tr-sm border-r-2 border-t-2 border-ng-border"></div>
+      </div>
+
+      <!-- Parallel Branches: Content vs View -->
+      <div class="grid w-full grid-cols-2 gap-3">
+        <!-- Left Branch: Content Projection -->
+        <div class="flex flex-col items-center">
+          <span class="mb-1.5 font-mono text-[11px] font-semibold text-ng-accent">
+            Content
+          </span>
+          <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngAfterContentInit' }" />
+          <div class="h-3 w-0.5 bg-ng-border"></div>
+          <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngAfterContentChecked' }" />
+        </div>
+
+        <!-- Right Branch: View DOM -->
+        <div class="flex flex-col items-center">
+          <span class="mb-1.5 font-mono text-[11px] font-semibold text-ng-success">
+            View
+          </span>
+          <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngAfterViewInit' }" />
+          <div class="h-3 w-0.5 bg-ng-border"></div>
+          <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngAfterViewChecked' }" />
+        </div>
+      </div>
+
+      <!-- Merge Connector back to Center Spine -->
+      <div class="grid w-full grid-cols-2">
+        <div class="ml-[50%] h-3 rounded-bl-sm border-b-2 border-l-2 border-ng-border"></div>
+        <div class="mr-[50%] h-3 rounded-br-sm border-b-2 border-r-2 border-ng-border"></div>
+      </div>
+    </div>
+
+    <!-- Connector from Change Detection to Rendering -->
+    <div class="h-4 w-0.5 bg-ng-border"></div>
+    <div class="text-[10px] leading-none text-ng-text-subtle">▼</div>
+
+    <!-- Phase 3: Rendering (DOM & Browser Paint) -->
+    <div
+      aria-label="Subgrafo Rendering"
+      class="mt-1 flex w-full flex-col items-center rounded-xl border border-ng-border bg-ng-bg/60 p-3.5"
+    >
+      <div class="mb-2.5 flex w-full flex-wrap items-center justify-between gap-2">
+        <span class="rounded-lg border border-ng-border bg-ng-surface px-2.5 py-0.5 font-mono text-[11px] font-medium text-ng-text-muted">
+          Rendering (DOM)
+        </span>
+        <span
+          [class]="
+            'ui-pill rounded-lg border px-2.5 py-0.5 font-mono text-[11px] font-medium ' +
+            domStageSummary().badgeClass
+          "
+        >
+          {{ domStageSummary().label }}
+        </span>
+      </div>
+
+      <ng-container *ngTemplateOutlet="hookNode; context: { id: 'afterNextRender' }" />
+      <div class="h-3 w-0.5 bg-ng-border"></div>
+
+      <ng-container *ngTemplateOutlet="hookNode; context: { id: 'afterEveryRender' }" />
+    </div>
+
+    <!-- Phase 4: Destruction -->
+    <div class="h-4 border-l-2 border-dashed border-ng-border"></div>
+    <div class="text-[10px] leading-none text-ng-text-subtle">▼</div>
+    <div class="mb-1.5 mt-1 font-mono text-[11px] font-semibold text-ng-error">
+      Destruction
+    </div>
+    <ng-container *ngTemplateOutlet="hookNode; context: { id: 'ngOnDestroy' }" />
+  </div>
+</section>

@@ -1,3 +1,452 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-ng-bg: #0f0f11;
+  --color-ng-surface: #18181b;
+  --color-ng-sidebar: #18181b;
+  --color-ng-surface-hover: #222227;
+  --color-ng-code: #121215;
+  --color-ng-border: rgba(255, 255, 255, 0.08);
+
+  --color-ng-purple: #a855f7;
+  --color-ng-crimson: #ff3355;
+
+  --color-ng-primary: #ff4d6d;
+  --color-ng-primary-hover: #ff6b86;
+  --color-ng-secondary: #c084fc;
+  --color-ng-accent: #f472b6;
+
+  --color-ng-text: #ffffff;
+  --color-ng-text-muted: #d4d4d8;
+  --color-ng-text-subtle: #a1a1aa;
+
+  --color-ng-success: #34d399;
+  --color-ng-warning: #fbbf24;
+  --color-ng-error: #ff5c77;
+  --color-ng-info: #60a5fa;
+}
+
+:root,
+html.dark {
+  color-scheme: dark;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --color-ng-bg: #0f0f11;
+  --color-ng-surface: #18181b;
+  --color-ng-sidebar: #18181b;
+  --color-ng-surface-hover: #242429;
+  --color-ng-code: #121215;
+  --color-ng-border: rgba(255, 255, 255, 0.12);
+  --color-ng-border-hover: rgba(168, 85, 247, 0.55);
+  --color-ng-header-bg: rgba(15, 15, 17, 0.75);
+
+  --color-ng-purple: #a855f7;
+  --color-ng-crimson: #ff3355;
+  --color-ng-primary: #ff4d6d;
+  --color-ng-primary-hover: #ff6b86;
+  --color-ng-secondary: #c084fc;
+  --color-ng-accent: #f472b6;
+
+  --color-ng-text: #ffffff;
+  --color-ng-text-muted: #d4d4d8;
+  --color-ng-text-subtle: #a1a1aa;
+
+  --ng-signature-gradient: linear-gradient(135deg, #f0060b 0%, #cc26d5 50%, #7702ff 100%);
+  --red-to-pink-to-purple-horizontal-gradient: var(--ng-signature-gradient);
+  --pink-to-purple-horizontal-gradient: var(--ng-signature-gradient);
+}
+
+html.light,
+html:not(.dark) {
+  color-scheme: light;
+  --color-ng-bg: #ffffff;
+  --color-ng-surface: #ffffff;
+  --color-ng-sidebar: #f8f9fa;
+  --color-ng-surface-hover: #f1f3f5;
+  --color-ng-code: #f8f9fa;
+  --color-ng-border: #d4d4d8;
+  --color-ng-border-hover: rgba(133, 20, 245, 0.45);
+  --color-ng-header-bg: rgba(255, 255, 255, 0.8);
+
+  --color-ng-purple: #7c3aed;
+  --color-ng-crimson: #dd0031;
+  --color-ng-primary: #c8002b;
+  --color-ng-primary-hover: #dd0031;
+  --color-ng-secondary: #6d28d9;
+  --color-ng-accent: #be185d;
+
+  --color-ng-text: #0f0f11;
+  --color-ng-text-muted: #3f3f46;
+  --color-ng-text-subtle: #52525b;
+
+  --color-ng-success: #047857;
+  --color-ng-warning: #b45309;
+  --color-ng-error: #be123c;
+  --color-ng-info: #1d4ed8;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-ng-bg);
+    color: var(--color-ng-text);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  .display-title {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+  }
+
+  code,
+  pre,
+  kbd {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer components {
+  .ng-gradient-text {
+    background: var(--ng-signature-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .ng-gradient-bar {
+    background: var(--ng-signature-gradient);
+  }
+
+  .ng-gradient-btn {
+    background: var(--ng-signature-gradient);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+  }
+
+  .ng-pill-cta {
+    background: var(--ng-signature-gradient);
+    color: #ffffff;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition:
+      transform 160ms var(--ease-out),
+      opacity 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .ng-glass-header {
+    background-color: var(--color-ng-header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-ng-border);
+  }
+
+  .ng-sidebar-surface {
+    background-color: var(--color-ng-sidebar);
+    border-right: 1px solid var(--color-ng-border);
+  }
+
+  .ng-card {
+    border-radius: 12px;
+    border: 1px solid var(--color-ng-border);
+    background-color: var(--color-ng-surface);
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .ng-card-interactive:hover {
+    border-color: var(--color-ng-border-hover);
+  }
+
+  .ng-code-container {
+    border-radius: 12px;
+    border: 1px solid var(--color-ng-border);
+    background-color: var(--color-ng-code);
+    overflow: hidden;
+    transition: border-color 180ms ease;
+  }
+
+  .ng-code-container:hover {
+    border-color: var(--color-ng-border-hover);
+  }
+
+  .ng-active-glow {
+    position: relative;
+    border-color: var(--color-ng-purple);
+    box-shadow: 0 0 0 1px rgba(133, 20, 245, 0.25);
+  }
+
+  .ng-ambient-glow {
+    background: radial-gradient(
+      circle at 50% 0%,
+      rgba(240, 6, 11, 0.14) 0%,
+      rgba(204, 38, 213, 0.12) 45%,
+      rgba(119, 2, 255, 0.1) 75%,
+      transparent 100%
+    );
+    filter: blur(120px);
+    opacity: 0.55;
+  }
+
+  html.light .ng-ambient-glow,
+  html:not(.dark) .ng-ambient-glow {
+    opacity: 0.28;
+  }
+
+  .ng-link {
+    color: var(--color-ng-purple);
+    transition: color 150ms ease;
+  }
+
+  .ng-link:hover,
+  .ng-link-active {
+    color: var(--color-ng-crimson);
+  }
+
+  /* Clean Cyber-Button: crisp colored borders, regular font, subtle radius */
+  .cyber-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1.25rem;
+    border-radius: 4px;
+    border: 1.5px solid transparent;
+    background-color: #121214;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 120ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  html.light .cyber-button,
+  html:not(.dark) .cyber-button {
+    background-color: #ffffff;
+    color: #18181b;
+  }
+
+  .cyber-button-emerald {
+    border-color: #00ff66;
+  }
+
+  html.light .cyber-button-emerald,
+  html:not(.dark) .cyber-button-emerald {
+    border-color: #059669;
+    color: #065f46;
+  }
+
+  .cyber-button-emerald:hover:not(:disabled) {
+    background-color: #00ff66;
+    color: #000000;
+  }
+
+  html.light .cyber-button-emerald:hover:not(:disabled),
+  html:not(.dark) .cyber-button-emerald:hover:not(:disabled) {
+    background-color: #059669;
+    color: #ffffff;
+  }
+
+  .cyber-button-rose {
+    border-color: #ff0033;
+  }
+
+  html.light .cyber-button-rose,
+  html:not(.dark) .cyber-button-rose {
+    border-color: #e11d48;
+    color: #9f1239;
+  }
+
+  .cyber-button-rose:hover:not(:disabled) {
+    background-color: #ff0033;
+    color: #ffffff;
+  }
+
+  html.light .cyber-button-rose:hover:not(:disabled),
+  html:not(.dark) .cyber-button-rose:hover:not(:disabled) {
+    background-color: #e11d48;
+    color: #ffffff;
+  }
+
+  .cyber-button-gradient {
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(#121214, #121214) padding-box,
+      var(--ng-signature-gradient) border-box;
+    color: #ffffff;
+  }
+
+  html.light .cyber-button-gradient,
+  html:not(.dark) .cyber-button-gradient {
+    background:
+      linear-gradient(#ffffff, #ffffff) padding-box,
+      var(--ng-signature-gradient) border-box;
+    color: #18181b;
+  }
+
+  .cyber-button-gradient:hover:not(:disabled) {
+    background:
+      linear-gradient(#1c1b22, #1c1b22) padding-box,
+      var(--ng-signature-gradient) border-box;
+    color: #ffffff;
+    filter: brightness(1.15);
+  }
+
+  html.light .cyber-button-gradient:hover:not(:disabled),
+  html:not(.dark) .cyber-button-gradient:hover:not(:disabled) {
+    background:
+      linear-gradient(#f4f4f5, #f4f4f5) padding-box,
+      var(--ng-signature-gradient) border-box;
+    color: #000000;
+    filter: none;
+  }
+
+  .cyber-button-gradient:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+    background: #121214;
+    border-color: #3f3f46;
+    color: #71717a;
+    filter: none;
+  }
+
+  html.light .cyber-button-gradient:disabled,
+  html:not(.dark) .cyber-button-gradient:disabled {
+    background: #f4f4f5;
+    border-color: #e4e4e7;
+    color: #a1a1aa;
+    opacity: 0.6;
+  }
+
+  .cyber-button:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .cyber-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+    border-color: #52525b;
+    color: #a1a1aa;
+    background-color: #121214;
+  }
+
+  html.light .cyber-button:disabled,
+  html:not(.dark) .cyber-button:disabled {
+    background-color: #f4f4f5;
+    border-color: #e4e4e7;
+    color: #a1a1aa;
+    opacity: 0.6;
+  }
+}
+
+button:not(:disabled),
+.ui-btn:not(:disabled) {
+  cursor: pointer;
+}
+
+.ui-btn {
+  border-radius: 8px;
+  transition:
+    transform 160ms var(--ease-out),
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease;
+}
+
+.ui-btn:active:not(:disabled),
+.ng-pill-cta:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ui-btn:hover:not(:disabled),
+  .ng-pill-cta:hover:not(:disabled) {
+    filter: brightness(1.06);
+  }
+}
+
+.ui-pill {
+  transition:
+    transform 180ms var(--ease-out),
+    background-color 180ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    color 180ms var(--ease-out);
+}
+
+.ui-card-stage {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition:
+    transform 220ms var(--ease-out),
+    opacity 220ms var(--ease-out),
+    border-color 200ms ease,
+    background-color 200ms ease;
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.98) translateY(4px);
+  }
+}
+
+.ui-item-card {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition:
+    transform 220ms var(--ease-out),
+    opacity 220ms var(--ease-out),
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.98) translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-btn:active:not(:disabled),
+  .ng-pill-cta:active:not(:disabled) {
+    transform: none;
+  }
+
+  .ui-pill {
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .ui-card-stage,
+  .ui-item-card {
+    transition:
+      opacity 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      color 150ms ease;
+
+    @starting-style {
+      opacity: 0;
+      transform: none;
+    }
+  }
+}

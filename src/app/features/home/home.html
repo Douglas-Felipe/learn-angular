@@ -1,0 +1,103 @@
+<section class="ui-card-stage mx-auto max-w-4xl space-y-10 py-6">
+  <!-- Hero Section -->
+  <header class="space-y-5 border-b border-ng-border pb-8 text-center">
+    <h1 class="display-title max-w-3xl text-balance text-4xl font-bold sm:text-5xl lg:text-6xl">
+      Veja como o <span class="ng-gradient-text">Angular</span> funciona por debaixo dos panos
+    </h1>
+
+    <p class="max-w-[65ch] text-base leading-[1.65] text-ng-text-muted sm:text-lg">
+      Explore o Angular moderno em câmera lenta. Visualize etapa por etapa como o framework gerencia eventos, mudanças e a renderização na tela.
+    </p>
+  </header>
+
+  <!-- Architectural Context Card -->
+  <div class="ng-card ng-card-interactive ui-card-stage space-y-4 p-6 text-sm leading-[1.65] text-ng-text-muted sm:p-7">
+    <div class="flex items-center justify-between">
+      <span class="rounded border border-ng-purple/30 bg-ng-purple/10 px-2.5 py-0.5 font-mono text-xs font-medium text-ng-purple">
+        Runtime Inspector
+      </span>
+      <span class="font-mono text-xs text-ng-text-subtle">Signals + DOM</span>
+    </div>
+
+    <h2 class="display-title text-xl font-semibold text-ng-text">
+      Do sinal em memória ao elemento pintado
+    </h2>
+
+    <p class="text-ng-text">
+      Comportamentos que levam milissegundos no navegador, desacelerados para você depurar visualmente. Ideal para construir seu modelo mental do zero ou validar nuances de reatividade e renderização no dia a dia..
+    </p>
+  </div>
+
+  <!-- Execution Pipeline Sequence Cards (12px radius + hover border transition) -->
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <a
+      routerLink="/life-cycle"
+      data-testid="card-hooks"
+      class="ng-card ng-card-interactive ui-item-card group block space-y-2.5 p-5"
+    >
+      <div class="flex items-center justify-between gap-2">
+        <span
+          class="inline-flex items-center rounded border border-ng-crimson/35 bg-ng-crimson/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-crimson"
+        >
+          01 • Hooks
+        </span>
+        <span class="font-mono text-[11px] text-ng-purple transition-transform group-hover:translate-x-0.5">
+          Disponível →
+        </span>
+      </div>
+      <h2 class="display-title text-base font-semibold text-ng-text">
+        Ciclo de Vida
+      </h2>
+      <p class="text-xs leading-[1.65] text-ng-text-muted">
+        Acompanhe a ordem exata de execução desde o <code class="font-mono text-ng-text">constructor()</code> até a
+        limpeza final em <code class="font-mono text-ng-text">ngOnDestroy()</code>.
+      </p>
+    </a>
+
+    <article
+      aria-disabled="true"
+      data-testid="card-state"
+      class="ng-card ui-item-card cursor-not-allowed select-none space-y-2.5 border-dashed opacity-50 p-5"
+    >
+      <div class="flex items-center justify-between gap-2">
+        <span
+          class="inline-flex items-center rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] font-medium text-ng-text-subtle"
+        >
+          02 • State
+        </span>
+        <span class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] text-ng-text-subtle">
+          Em breve
+        </span>
+      </div>
+      <h2 class="display-title text-base font-semibold text-ng-text-muted">
+        Detecção de Mudanças
+      </h2>
+      <p class="text-xs leading-[1.65] text-ng-text-subtle">
+        Compare o estado em memória com o template verificado durante cada ciclo de atualização de inputs.
+      </p>
+    </article>
+
+    <article
+      aria-disabled="true"
+      data-testid="card-browser"
+      class="ng-card ui-item-card cursor-not-allowed select-none space-y-2.5 border-dashed opacity-50 p-5"
+    >
+      <div class="flex items-center justify-between gap-2">
+        <span
+          class="inline-flex items-center rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] font-medium text-ng-text-subtle"
+        >
+          03 • Browser
+        </span>
+        <span class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] text-ng-text-subtle">
+          Em breve
+        </span>
+      </div>
+      <h2 class="display-title text-base font-semibold text-ng-text-muted">
+        Renderização &amp; DOM
+      </h2>
+      <p class="text-xs leading-[1.65] text-ng-text-subtle">
+        Visualize em qual momento a View é montada e quando os callbacks pós-pintura disparam no navegador.
+      </p>
+    </article>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+<header class="ng-glass-header relative flex h-16 shrink-0 items-center justify-between gap-4 px-6 md:px-8">
+  <div class="ng-gradient-bar pointer-events-none absolute inset-x-0 top-0 h-[2px] opacity-90"></div>
+
+  <div class="flex min-w-0 items-center gap-2.5">
+    <span class="font-mono text-xs font-medium text-ng-text-subtle">Docs</span>
+    <span class="font-mono text-xs text-ng-text-subtle/50" aria-hidden="true">/</span>
+    <h1 class="display-title truncate text-base font-semibold text-ng-text">
+      {{ pageTitle() }}
+    </h1>
+  </div>
+
+  <div class="flex items-center gap-2.5">
+    <!-- Theme Toggle (Dark #0F0F11 / Light #FFFFFF) -->
+    <button
+      type="button"
+      data-testid="theme-toggle"
+      [attr.aria-label]="isDarkMode() ? 'Alternar para modo claro' : 'Alternar para modo escuro'"
+      [title]="isDarkMode() ? 'Modo Claro' : 'Modo Escuro'"
+      (click)="toggleTheme()"
+      class="ui-btn flex h-9 w-9 items-center justify-center rounded-lg border border-ng-border bg-ng-surface font-mono text-xs font-medium text-ng-text-muted hover:border-ng-purple/60 hover:bg-ng-surface-hover hover:text-ng-text"
+    >
+      @if (isDarkMode()) {
+        <span aria-hidden="true">☀</span>
+      } @else {
+        <span aria-hidden="true">☾</span>
+      }
+    </button>
+
+    <!-- Official Angular Docs Link -->
+    <a
+      [href]="docsUrl()"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Documentação oficial do Angular"
+      title="Documentação oficial do Angular"
+      class="ui-btn flex h-9 w-9 items-center justify-center rounded-lg border border-ng-border bg-ng-surface font-mono text-sm font-medium text-ng-text-muted hover:border-ng-crimson/60 hover:bg-ng-surface-hover hover:text-ng-text"
+    >
+      ?
+    </a>
+  </div>
+</header>

@@ -1,0 +1,17 @@
+<div class="flex h-screen w-screen overflow-hidden bg-ng-bg text-ng-text">
+  <app-sidebar />
+  <div class="relative flex min-w-0 flex-1 flex-col overflow-y-auto">
+    <div
+      aria-hidden="true"
+      class="ng-ambient-glow pointer-events-none absolute inset-x-12 -top-24 h-72 rounded-full"
+    ></div>
+    <app-header
+      class="sticky top-0 z-30 block"
+      [pageTitle]="currentRoute().title"
+      [docsUrl]="currentRoute().docsUrl"
+    />
+    <main class="relative flex-1 p-6 md:p-8 lg:p-10">
+      <ng-content></ng-content>
+    </main>
+  </div>
+</div>
