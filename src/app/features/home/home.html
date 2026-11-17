@@ -1,75 +1,148 @@
-<section class="ui-card-stage mx-auto max-w-4xl space-y-8 py-6">
-  <header class="space-y-4 border-b border-ng-border pb-6">
-    <span
-      class="inline-flex items-center gap-2 rounded border border-ng-border bg-ng-surface px-3 py-1 font-mono text-xs font-medium text-ng-text-muted shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
-    >
+<section class="ui-card-stage mx-auto max-w-4xl space-y-10 py-6">
+  <!-- Hero Section -->
+  <header class="space-y-5 border-b border-ng-border pb-8">
+    <div class="inline-flex items-center gap-2 rounded-lg border border-ng-border bg-ng-surface px-3 py-1 font-mono text-xs font-medium text-ng-text-muted">
       <span class="ng-gradient-bar h-2 w-2 rounded-full" aria-hidden="true"></span>
-      Visão Geral
-    </span>
+      <span>angular.dev • v22.2 DX</span>
+    </div>
 
-    <h1 class="font-display text-balance text-4xl font-bold tracking-tight sm:text-5xl">
-      <span class="ng-gradient-text">Learn Angular</span>
+    <h1 class="display-title max-w-3xl text-balance text-4xl font-bold sm:text-5xl lg:text-6xl">
+      Arquitetura interativa para <span class="ng-gradient-text">Learn Angular</span>
     </h1>
 
-    <p class="max-w-2xl text-balance text-base leading-relaxed text-ng-text-muted sm:text-lg">
-      Um espaço para estudar, revisar e visualizar como o Angular funciona por debaixo dos panos.
+    <p class="max-w-[65ch] text-base leading-[1.65] text-ng-text-muted sm:text-lg">
+      Um espaço técnico para estudar, revisar e inspecionar visualmente como o Angular funciona por debaixo dos panos — da instanciação em memória à pintura final no DOM.
     </p>
+
+    <!-- Hero Actions: Pill CTA (9999px) + Interactive CLI Command -->
+    <div class="flex flex-wrap items-center gap-3.5 pt-2">
+      <a
+        routerLink="/life-cycle"
+        data-testid="hero-cta"
+        class="ng-pill-cta inline-flex items-center gap-2.5 px-6 py-2.5 text-sm font-semibold"
+      >
+        <span>Explorar Ciclo de Vida</span>
+        <span class="font-mono text-xs opacity-90" aria-hidden="true">→</span>
+      </a>
+
+      <div
+        class="inline-flex items-center gap-3 rounded-lg border border-ng-border bg-ng-code px-3.5 py-2 font-mono text-xs text-ng-text-muted"
+      >
+        <span class="select-none text-ng-purple">$</span>
+        <code class="text-ng-text">{{ cliCommand }}</code>
+        <button
+          type="button"
+          data-testid="copy-cli-btn"
+          (click)="copyCli()"
+          aria-label="Copiar comando CLI"
+          class="ui-btn rounded-lg border border-ng-border bg-ng-surface px-2.5 py-1 font-mono text-[11px] font-medium text-ng-text-muted hover:border-ng-purple/50 hover:text-ng-text"
+        >
+          {{ isCliCopied() ? 'Copiado!' : 'Copiar' }}
+        </button>
+      </div>
+    </div>
   </header>
 
-  <div class="ng-card ui-card-stage space-y-4 rounded-md p-6 text-sm leading-relaxed text-ng-text-muted sm:p-7">
+  <!-- Architectural Context Card -->
+  <div class="ng-card ng-card-interactive ui-card-stage space-y-4 p-6 text-sm leading-[1.65] text-ng-text-muted sm:p-7">
+    <div class="flex items-center justify-between">
+      <span class="rounded border border-ng-purple/30 bg-ng-purple/10 px-2.5 py-0.5 font-mono text-xs font-medium text-ng-purple">
+        Runtime Inspector
+      </span>
+      <span class="font-mono text-xs text-ng-text-subtle">Signals + DOM</span>
+    </div>
+
+    <h2 class="display-title text-xl font-semibold text-ng-text">
+      Do sinal em memória ao elemento pintado
+    </h2>
+
     <p class="text-ng-text">
-      Este projeto reúne conceitos essenciais do Angular de forma prática e visual, transformando comportamentos que
-      acontecem em milissegundos no navegador em demonstrações passo a passo fáceis de acompanhar.
+      Este projeto reúne conceitos essenciais do Angular de forma prática e visual, transformando comportamentos que acontecem em milissegundos no navegador em demonstrações passo a passo fáceis de acompanhar.
     </p>
+
     <p>
-      A proposta é servir tanto para quem está aprendendo quanto para revisões rápidas sobre o funcionamento interno do
-      framework, como ciclo de vida, detecção de mudanças e atualização do DOM.
+      A proposta é servir tanto para quem está aprendendo quanto para revisões rápidas sobre o funcionamento interno do framework, como ciclo de vida, detecção de mudanças e atualização do DOM.
     </p>
-    <p class="font-mono text-xs text-ng-text-subtle">
-      Utilize o menu lateral para navegar pelos tópicos disponíveis.
-    </p>
+
+    <div class="border-t border-ng-border pt-4">
+      <a
+        routerLink="/life-cycle"
+        class="ng-link inline-flex items-center gap-2 font-mono text-xs font-medium"
+      >
+        <span>Abrir depurador de hooks</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
 
+  <!-- Execution Pipeline Sequence Cards (12px radius + hover border transition) -->
   <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    <article class="ng-card ui-item-card space-y-2.5 rounded-md p-5">
-      <span
-        class="inline-flex items-center rounded border border-ng-primary/30 bg-ng-primary/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-primary"
-      >
-        01 • Hooks
-      </span>
-      <h2 class="font-display text-base font-semibold tracking-tight text-ng-text">
+    <a
+      routerLink="/life-cycle"
+      data-testid="card-hooks"
+      class="ng-card ng-card-interactive ui-item-card group block space-y-2.5 p-5"
+    >
+      <div class="flex items-center justify-between gap-2">
+        <span
+          class="inline-flex items-center rounded border border-ng-crimson/35 bg-ng-crimson/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-crimson"
+        >
+          01 • Hooks
+        </span>
+        <span class="font-mono text-[11px] text-ng-purple transition-transform group-hover:translate-x-0.5">
+          Disponível →
+        </span>
+      </div>
+      <h2 class="display-title text-base font-semibold text-ng-text">
         Ciclo de Vida
       </h2>
-      <p class="text-xs leading-relaxed text-ng-text-muted">
+      <p class="text-xs leading-[1.65] text-ng-text-muted">
         Acompanhe a ordem exata de execução desde o <code class="font-mono text-ng-text">constructor()</code> até a
         limpeza final em <code class="font-mono text-ng-text">ngOnDestroy()</code>.
       </p>
-    </article>
+    </a>
 
-    <article class="ng-card ui-item-card space-y-2.5 rounded-md p-5">
-      <span
-        class="inline-flex items-center rounded border border-ng-secondary/30 bg-ng-secondary/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-secondary"
-      >
-        02 • State
-      </span>
-      <h2 class="font-display text-base font-semibold tracking-tight text-ng-text">
+    <article
+      aria-disabled="true"
+      data-testid="card-state"
+      class="ng-card ui-item-card cursor-not-allowed select-none space-y-2.5 border-dashed opacity-50 p-5"
+    >
+      <div class="flex items-center justify-between gap-2">
+        <span
+          class="inline-flex items-center rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] font-medium text-ng-text-subtle"
+        >
+          02 • State
+        </span>
+        <span class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] text-ng-text-subtle">
+          Em breve
+        </span>
+      </div>
+      <h2 class="display-title text-base font-semibold text-ng-text-muted">
         Detecção de Mudanças
       </h2>
-      <p class="text-xs leading-relaxed text-ng-text-muted">
+      <p class="text-xs leading-[1.65] text-ng-text-subtle">
         Compare o estado em memória com o template verificado durante cada ciclo de atualização de inputs.
       </p>
     </article>
 
-    <article class="ng-card ui-item-card space-y-2.5 rounded-md p-5">
-      <span
-        class="inline-flex items-center rounded border border-ng-success/30 bg-ng-success/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-success"
-      >
-        03 • Browser
-      </span>
-      <h2 class="font-display text-base font-semibold tracking-tight text-ng-text">
+    <article
+      aria-disabled="true"
+      data-testid="card-browser"
+      class="ng-card ui-item-card cursor-not-allowed select-none space-y-2.5 border-dashed opacity-50 p-5"
+    >
+      <div class="flex items-center justify-between gap-2">
+        <span
+          class="inline-flex items-center rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] font-medium text-ng-text-subtle"
+        >
+          03 • Browser
+        </span>
+        <span class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] text-ng-text-subtle">
+          Em breve
+        </span>
+      </div>
+      <h2 class="display-title text-base font-semibold text-ng-text-muted">
         Renderização &amp; DOM
       </h2>
-      <p class="text-xs leading-relaxed text-ng-text-muted">
+      <p class="text-xs leading-[1.65] text-ng-text-subtle">
         Visualize em qual momento a View é montada e quando os callbacks pós-pintura disparam no navegador.
       </p>
     </article>
