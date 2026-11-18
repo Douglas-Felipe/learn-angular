@@ -1,13 +1,18 @@
 import {
   DEFAULT_CARD_TEXT,
+  DEFAULT_OBJECT_NAME,
+  FALLBACK_OBJECT_NAME,
   FALLBACK_UPDATED_TEXT,
   HOOK_CODE_BLOCKS,
   HOOK_THEMES,
   buildDestroySteps,
   buildMountSteps,
+  buildObjectMutateSteps,
+  buildObjectRecreateSteps,
   buildUpdateSteps,
   resolveDomCardClasses,
   resolveNextCardText,
+  resolveNextObjectName,
 } from './life-cycle.util';
 
 describe('life-cycle.util', () => {
@@ -60,5 +65,41 @@ describe('life-cycle.util', () => {
 
     const syncedStep = buildUpdateSteps('Antigo', 'Novo')[3];
     expect(resolveDomCardClasses(syncedStep, false).card).toContain('border-ng-success');
+
+    const [mutateStep] = buildObjectMutateSteps('Texto', 'Ada Lovelace', 'Grace Hopper', 1);
+    expect(resolveDomCardClasses(mutateStep, false).card).toContain('border-ng-warning');
+    expect(resolveDomCardClasses(mutateStep, false).title).toContain('text-ng-warning');
+  });
+
+  it('should build object mutate and recreate step sequences and resolve next object name', () => {
+    const mutateSteps = buildObjectMutateSteps('Olá', 'Ada Lovelace', 'Grace Hopper', 2);
+    expect(mutateSteps).toHaveLength(1);
+    expect(mutateSteps[0].hook).toBe('ngOnChanges');
+    expect(mutateSteps[0].mutationIgnored).toBe(true);
+    expect(mutateSteps[0].isObjectCycle).toBe(true);
+    expect(mutateSteps[0].domObjectName).toBe('Ada Lovelace');
+    expect(mutateSteps[0].memoryObjectName).toBe('Grace Hopper');
+    expect(mutateSteps[0].objectRefId).toBe(2);
+    expect(mutateSteps[0].debugLine).toContain('IGNORADO! ref #2 === ref #2');
+
+    const recreateSteps = buildObjectRecreateSteps('Olá', 'Ada Lovelace', 'Grace Hopper', 2, 3);
+    expect(recreateSteps).toHaveLength(5);
+    expect(recreateSteps[0].hook).toBe('ngOnChanges');
+    expect(recreateSteps[0].mutationIgnored).toBe(false);
+    expect(recreateSteps[0].domObjectName).toBe('Ada Lovelace');
+    expect(recreateSteps[0].memoryObjectName).toBe('Grace Hopper');
+    expect(recreateSteps[0].previousObjectRefId).toBe(2);
+    expect(recreateSteps[0].objectRefId).toBe(3);
+    expect(recreateSteps[3].hook).toBe('ngAfterViewChecked');
+    expect(recreateSteps[3].domObjectName).toBe('Grace Hopper');
+
+    expect(resolveNextObjectName(DEFAULT_OBJECT_NAME, 'Grace Hopper')).toBe('Grace Hopper');
+    expect(resolveNextObjectName(DEFAULT_OBJECT_NAME, '   ')).toBe(FALLBACK_OBJECT_NAME);
+    expect(resolveNextObjectName(DEFAULT_OBJECT_NAME, DEFAULT_OBJECT_NAME)).toBe(
+      FALLBACK_OBJECT_NAME
+    );
+    expect(resolveNextObjectName(FALLBACK_OBJECT_NAME, FALLBACK_OBJECT_NAME)).toBe(
+      DEFAULT_OBJECT_NAME
+    );
   });
 });

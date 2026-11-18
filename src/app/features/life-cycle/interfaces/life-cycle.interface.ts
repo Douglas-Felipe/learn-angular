@@ -38,6 +38,12 @@ export interface DebugStep {
   previousText: string;
   explanation: string;
   debugLine: string;
+  domObjectName?: string;
+  memoryObjectName?: string;
+  objectRefId?: number;
+  previousObjectRefId?: number;
+  mutationIgnored?: boolean;
+  isObjectCycle?: boolean;
 }
 
 export interface DomCardClasses {

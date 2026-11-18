@@ -15,13 +15,20 @@ export class DomTree {
   readonly domText = input.required<string>();
   readonly memoryText = input.required<string>();
   readonly cycleHooks = input<HookId[]>([]);
+  readonly mutationIgnored = input<boolean>(false);
 
   readonly selectHook = output<HookId>();
 
   protected readonly activeMeta = computed(() => HOOK_META[this.hook()]);
 
   protected readonly domStageSummary = computed(() =>
-    resolveDomStageSummary(this.hook(), this.mounted(), this.domText(), this.memoryText())
+    resolveDomStageSummary(
+      this.hook(),
+      this.mounted(),
+      this.domText(),
+      this.memoryText(),
+      this.mutationIgnored()
+    )
   );
 
   protected readonly nodeStatuses = computed<Record<HookId, TreeNodeStatus>>(() =>

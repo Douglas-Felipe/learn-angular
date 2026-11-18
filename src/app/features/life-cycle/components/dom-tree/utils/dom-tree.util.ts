@@ -100,7 +100,8 @@ export function resolveDomStageSummary(
   activeHook: HookId,
   isMounted: boolean,
   dom: string,
-  memory: string
+  memory: string,
+  mutationIgnored = false
 ): DomStageSummary {
   if (activeHook === 'ngOnDestroy') {
     return {
@@ -112,6 +113,12 @@ export function resolveDomStageSummary(
     return {
       label: memory ? `Memória: "${memory}" • DOM vazio` : 'DOM ainda não montado',
       badgeClass: 'border-ng-border bg-ng-surface text-ng-text-subtle',
+    };
+  }
+  if (mutationIgnored) {
+    return {
+      label: 'ngOnChanges ignorado (mesma ref)',
+      badgeClass: 'border-ng-warning/50 bg-ng-warning/15 text-ng-warning',
     };
   }
   if (memory !== dom) {

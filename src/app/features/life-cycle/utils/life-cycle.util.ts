@@ -8,6 +8,8 @@ import {
 
 export const DEFAULT_CARD_TEXT = 'Olá, Angular!';
 export const FALLBACK_UPDATED_TEXT = 'Texto Atualizado!';
+export const DEFAULT_OBJECT_NAME = 'Ada Lovelace';
+export const FALLBACK_OBJECT_NAME = 'Alan Turing';
 export const PLAYBACK_INTERVAL_MS = 1100;
 
 export const HOOK_CODE_BLOCKS: HookCodeBlock[] = [
@@ -202,7 +204,13 @@ export const HOOK_THEMES: Record<HookId, HookTheme> = {
   },
 };
 
-export function buildMountSteps(text: string): DebugStep[] {
+export function buildMountSteps(
+  text: string,
+  objectName: string = DEFAULT_OBJECT_NAME,
+  objectRefId = 1
+): DebugStep[] {
+  const refMeta = { objectRefId, previousObjectRefId: objectRefId };
+
   return [
     {
       hook: 'constructor',
@@ -210,6 +218,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: '',
       memoryText: '',
       previousText: '',
+      domObjectName: '',
+      memoryObjectName: '',
+      ...refMeta,
       explanation: 'Instância da classe criada em memória. input() ainda não recebeu valor e não há DOM.',
       debugLine: 'this = CardDemoComponent {} | texto() = undefined',
     },
@@ -219,6 +230,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: '',
       memoryText: text,
       previousText: '',
+      domObjectName: '',
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'Primeiro input() recebido em memória antes mesmo do ngOnInit().',
       debugLine: `changes['texto'] = { previousValue: undefined, currentValue: '${text}', firstChange: true }`,
     },
@@ -228,6 +242,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: '',
       memoryText: text,
       previousText: '',
+      domObjectName: '',
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'Componente inicializado com os primeiros inputs disponíveis na classe.',
       debugLine: `this.texto() === '${text}' (aguardando criação do DOM)`,
     },
@@ -237,6 +254,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: '',
       memoryText: text,
       previousText: '',
+      domObjectName: '',
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'Angular avalia as expressões do template para construir os nós HTML.',
       debugLine: `Template dirty check: {{ texto() }} = '${text}'`,
     },
@@ -246,6 +266,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: '',
       memoryText: text,
       previousText: '',
+      domObjectName: '',
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'Conteúdo projetado via <ng-content> vinculado ao componente pela primeira vez.',
       debugLine: `<ng-content> projetado | texto() = '${text}'`,
     },
@@ -255,6 +278,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: '',
       memoryText: text,
       previousText: '',
+      domObjectName: '',
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'Bindings do conteúdo projetado verificados; seguindo para montar a View.',
       debugLine: `Conteúdo projetado verificado (DOM próprio ainda pendente)`,
     },
@@ -264,6 +290,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: text,
       memoryText: text,
       previousText: '',
+      domObjectName: objectName,
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'DOM criado e visível na tela! O texto do card foi renderizado.',
       debugLine: `View montada no DOM -> <p>${text}</p>`,
     },
@@ -273,6 +302,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: text,
       memoryText: text,
       previousText: '',
+      domObjectName: objectName,
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'View do componente e views filhas verificadas após a criação inicial.',
       debugLine: `View sincronizada com texto() === '${text}'`,
     },
@@ -282,6 +314,9 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: text,
       memoryText: text,
       previousText: '',
+      domObjectName: objectName,
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'Executado uma única vez após o navegador pintar o DOM inicial na tela.',
       debugLine: `Browser pintou o DOM inicial pela 1ª vez ('${text}')`,
     },
@@ -291,13 +326,28 @@ export function buildMountSteps(text: string): DebugStep[] {
       domText: text,
       memoryText: text,
       previousText: '',
+      domObjectName: objectName,
+      memoryObjectName: objectName,
+      ...refMeta,
       explanation: 'Executado ao final de cada ciclo de renderização no navegador.',
       debugLine: `Renderização finalizada no browser -> <p>${text}</p>`,
     },
   ];
 }
 
-export function buildUpdateSteps(prevText: string, nextText: string): DebugStep[] {
+export function buildUpdateSteps(
+  prevText: string,
+  nextText: string,
+  objectName: string = DEFAULT_OBJECT_NAME,
+  objectRefId = 1
+): DebugStep[] {
+  const objectMeta = {
+    domObjectName: objectName,
+    memoryObjectName: objectName,
+    objectRefId,
+    previousObjectRefId: objectRefId,
+  };
+
   return [
     {
       hook: 'ngOnChanges',
@@ -305,6 +355,7 @@ export function buildUpdateSteps(prevText: string, nextText: string): DebugStep[
       domText: prevText,
       memoryText: nextText,
       previousText: prevText,
+      ...objectMeta,
       explanation: `input() mudou em memória para "${nextText}". No DOM o card ainda exibe "${prevText}".`,
       debugLine: `changes['texto'] = { previousValue: '${prevText}', currentValue: '${nextText}' }`,
     },
@@ -314,6 +365,7 @@ export function buildUpdateSteps(prevText: string, nextText: string): DebugStep[
       domText: prevText,
       memoryText: nextText,
       previousText: prevText,
+      ...objectMeta,
       explanation: 'Change Detection compara a memória com o DOM e prepara a atualização da View.',
       debugLine: `Dirty check: memória ('${nextText}') !== DOM ('${prevText}')`,
     },
@@ -323,6 +375,7 @@ export function buildUpdateSteps(prevText: string, nextText: string): DebugStep[
       domText: prevText,
       memoryText: nextText,
       previousText: prevText,
+      ...objectMeta,
       explanation: 'Conteúdo projetado verificado antes de aplicar a atualização na View do card.',
       debugLine: `Conteúdo verificado | aguardando ViewChecked para aplicar '${nextText}'`,
     },
@@ -332,6 +385,7 @@ export function buildUpdateSteps(prevText: string, nextText: string): DebugStep[
       domText: nextText,
       memoryText: nextText,
       previousText: prevText,
+      ...objectMeta,
       explanation: `DOM atualizado! O texto do card agora exibe "${nextText}" na tela.`,
       debugLine: `DOM atualizado -> <p>${nextText}</p>`,
     },
@@ -341,13 +395,18 @@ export function buildUpdateSteps(prevText: string, nextText: string): DebugStep[
       domText: nextText,
       memoryText: nextText,
       previousText: prevText,
+      ...objectMeta,
       explanation: 'Browser concluiu a nova pintura na tela com o texto atualizado.',
       debugLine: `Browser repintou o DOM com '${nextText}'`,
     },
   ];
 }
 
-export function buildDestroySteps(prevText: string): DebugStep[] {
+export function buildDestroySteps(
+  prevText: string,
+  prevObjectName: string = DEFAULT_OBJECT_NAME,
+  objectRefId = 1
+): DebugStep[] {
   return [
     {
       hook: 'ngOnDestroy',
@@ -355,18 +414,129 @@ export function buildDestroySteps(prevText: string): DebugStep[] {
       domText: '',
       memoryText: '',
       previousText: prevText,
+      domObjectName: '',
+      memoryObjectName: '',
+      objectRefId,
+      previousObjectRefId: objectRefId,
       explanation: 'Último hook antes de o Angular destruir a instância e remover o card do DOM.',
-      debugLine: `Cleanup executado — instância destruída (último texto: '${prevText}')`,
+      debugLine: `Cleanup executado — instância destruída (último texto: '${prevText}', usuario: '${prevObjectName}')`,
     },
   ];
 }
 
-export function resolveNextCardText(prevText: string, rawDraftText: string): string {
-  const typed = rawDraftText.trim();
-  if (typed && typed !== prevText) {
+/** Simula mutação direta de propriedade mantendo a mesma referência de objeto. */
+export function buildObjectMutateSteps(
+  currentText: string,
+  domObjectName: string,
+  mutatedObjectName: string,
+  objectRefId = 1
+): DebugStep[] {
+  return [
+    {
+      hook: 'ngOnChanges',
+      mounted: true,
+      domText: currentText,
+      memoryText: currentText,
+      previousText: currentText,
+      domObjectName,
+      memoryObjectName: mutatedObjectName,
+      objectRefId,
+      previousObjectRefId: objectRefId,
+      mutationIgnored: true,
+      isObjectCycle: true,
+      explanation: `Pegadinha do ngOnChanges! O atributo interno mudou para "${mutatedObjectName}", mas a referência do objeto em memória continuou a mesma (ref #${objectRefId} === ref #${objectRefId}). Como o Angular compara inputs por referência (===), o ngOnChanges NÃO dispara e o ciclo de atualização é ignorado.`,
+      debugLine: `IGNORADO! ref #${objectRefId} === ref #${objectRefId} (mutar usuario.nome = '${mutatedObjectName}' não dispara ngOnChanges)`,
+    },
+  ];
+}
+
+/** Simula recriação imutável do objeto gerando nova referência e disparando o ciclo completo. */
+export function buildObjectRecreateSteps(
+  currentText: string,
+  prevObjectName: string,
+  nextObjectName: string,
+  prevRefId: number,
+  nextRefId: number
+): DebugStep[] {
+  const shared = {
+    mounted: true,
+    domText: currentText,
+    memoryText: currentText,
+    previousText: currentText,
+    objectRefId: nextRefId,
+    previousObjectRefId: prevRefId,
+    mutationIgnored: false,
+    isObjectCycle: true,
+  };
+
+  return [
+    {
+      hook: 'ngOnChanges',
+      ...shared,
+      domObjectName: prevObjectName,
+      memoryObjectName: nextObjectName,
+      explanation: `Nova referência criada (ref #${prevRefId} !== ref #${nextRefId})! Como o endereço do objeto mudou, o Angular dispara ngOnChanges() com usuario.nome = "${nextObjectName}", enquanto o DOM ainda exibe "${prevObjectName}".`,
+      debugLine: `changes['usuario'] = { previousValue: { nome: '${prevObjectName}' } (ref #${prevRefId}), currentValue: { nome: '${nextObjectName}' } (ref #${nextRefId}) }`,
+    },
+    {
+      hook: 'ngDoCheck',
+      ...shared,
+      domObjectName: prevObjectName,
+      memoryObjectName: nextObjectName,
+      explanation: `Change Detection confirma nova referência (ref #${nextRefId}) e prepara a atualização de usuario.nome no template.`,
+      debugLine: `Dirty check: ref #${prevRefId} !== ref #${nextRefId} ('${nextObjectName}' !== '${prevObjectName}')`,
+    },
+    {
+      hook: 'ngAfterContentChecked',
+      ...shared,
+      domObjectName: prevObjectName,
+      memoryObjectName: nextObjectName,
+      explanation: `Conteúdo projetado verificado antes de aplicar { nome: "${nextObjectName}" } (ref #${nextRefId}) na View.`,
+      debugLine: `Conteúdo verificado | aguardando ViewChecked para aplicar '{ nome: "${nextObjectName}" }'`,
+    },
+    {
+      hook: 'ngAfterViewChecked',
+      ...shared,
+      domObjectName: nextObjectName,
+      memoryObjectName: nextObjectName,
+      explanation: `DOM atualizado com o novo objeto! O card agora exibe usuario.nome = "${nextObjectName}" (ref #${nextRefId}).`,
+      debugLine: `DOM atualizado -> usuario = { nome: '${nextObjectName}' } (ref #${nextRefId})`,
+    },
+    {
+      hook: 'afterEveryRender',
+      ...shared,
+      domObjectName: nextObjectName,
+      memoryObjectName: nextObjectName,
+      explanation: `Browser concluiu a pintura na tela com a nova referência ref #${nextRefId} ("${nextObjectName}").`,
+      debugLine: `Browser repintou o DOM com usuario = { nome: '${nextObjectName}' } (ref #${nextRefId})`,
+    },
+  ];
+}
+
+function resolveNextValue(
+  prevValue: string,
+  rawDraft: string,
+  defaultValue: string,
+  fallbackValue: string
+): string {
+  const typed = rawDraft.trim();
+  if (typed && typed !== prevValue) {
     return typed;
   }
-  return prevText === DEFAULT_CARD_TEXT ? FALLBACK_UPDATED_TEXT : DEFAULT_CARD_TEXT;
+  return prevValue === defaultValue ? fallbackValue : defaultValue;
+}
+
+export function resolveNextCardText(prevText: string, rawDraftText: string): string {
+  return resolveNextValue(prevText, rawDraftText, DEFAULT_CARD_TEXT, FALLBACK_UPDATED_TEXT);
+}
+
+export function resolveNextObjectName(prevObjectName: string, rawDraftObjectName: string): string {
+  return resolveNextValue(
+    prevObjectName,
+    rawDraftObjectName,
+    DEFAULT_OBJECT_NAME,
+    FALLBACK_OBJECT_NAME
+  );
 }
 
 export function resolveDomCardClasses(step: DebugStep, hasPendingChange: boolean): DomCardClasses {
@@ -380,6 +550,12 @@ export function resolveDomCardClasses(step: DebugStep, hasPendingChange: boolean
     return {
       card: 'border-zinc-300 dark:border-zinc-700 bg-transparent text-zinc-600 dark:text-zinc-400',
       title: 'text-zinc-600 dark:text-zinc-400',
+    };
+  }
+  if (step.mutationIgnored) {
+    return {
+      card: 'border-ng-warning bg-ng-warning/15',
+      title: 'text-ng-warning',
     };
   }
   if (hasPendingChange) {

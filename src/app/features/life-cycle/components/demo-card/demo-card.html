@@ -21,9 +21,9 @@
 
         <span
           class="truncate font-mono text-xs font-bold uppercase tracking-wider text-ng-text-subtle"
-          [title]="theme().phaseLabel"
+          [title]="step().mutationIgnored ? 'Ciclo ignorado (mesma referência)' : theme().phaseLabel"
         >
-          {{ theme().phaseLabel }}
+          {{ step().mutationIgnored ? 'Ciclo ignorado (mesma referência)' : theme().phaseLabel }}
         </span>
       </div>
     </div>
@@ -96,9 +96,38 @@
         {{ step().domText }}
       </p>
 
-      @if (hasPendingChange()) {
+      @if (step().domObjectName) {
+        <div
+          data-testid="dom-object-badge"
+          class="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs"
+        >
+          <span class="rounded-lg border border-ng-border bg-ng-bg/60 px-2.5 py-1 text-ng-text-muted">
+            usuario = <strong class="text-ng-text">&#123; nome: "{{ step().domObjectName }}" &#125;</strong>
+          </span>
+          <span class="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[11px] font-bold text-cyan-700 dark:text-cyan-300">
+            ref #{{ domObjectRefId() }}
+          </span>
+        </div>
+      }
+
+      @if (hasPendingTextChange()) {
         <p class="rounded-xl border border-amber-600/40 bg-amber-100/90 px-3 py-2 text-xs font-semibold text-amber-950">
           Na memória: <strong class="font-bold text-amber-950">"{{ step().memoryText }}"</strong> (aguardando ngAfterViewChecked)
+        </p>
+      }
+
+      @if (hasPendingObjectChange()) {
+        <p class="rounded-xl border border-amber-600/40 bg-amber-100/90 px-3 py-2 text-xs font-semibold text-amber-950">
+          Na memória (ref #{{ step().objectRefId }}): <strong class="font-bold text-amber-950">&#123; nome: "{{ step().memoryObjectName }}" &#125;</strong> (aguardando ngAfterViewChecked)
+        </p>
+      }
+
+      @if (step().mutationIgnored) {
+        <p
+          data-testid="mutation-ignored-alert"
+          class="rounded-xl border border-amber-600/40 bg-amber-100/90 px-3 py-2 text-xs font-semibold text-amber-950"
+        >
+          Mutação ignorada (ref #{{ step().objectRefId }} === ref #{{ step().objectRefId }}): em memória <strong class="font-mono font-bold text-amber-950">usuario.nome = "{{ step().memoryObjectName }}"</strong>, mas o <span class="font-mono font-bold">ngOnChanges()</span> não disparou e o DOM manteve <strong class="font-bold">"{{ step().domObjectName }}"</strong>!
         </p>
       }
     }
@@ -134,4 +163,54 @@
       </button>
     </div>
   </form>
+
+  <!-- Demonstração de Objeto via input(): Mutação vs Nova Referência -->
+  <div class="space-y-3 border-t border-ng-border/80 pt-4">
+    <div class="space-y-1">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <span class="font-mono text-xs font-bold tracking-wider text-cyan-700 dark:text-cyan-400">
+          OnChanges: OBJETO VIA INPUT()
+        </span>
+        <span class="rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] text-ng-text-subtle">
+          comparação por referência (===)
+        </span>
+      </div>
+      <p class="text-sm leading-[1.65] text-ng-text">
+        Alterar apenas o atributo interno mantém a mesma referência em memória e <strong>não dispara</strong> o <code class="text-ng-text">ngOnChanges</code>. Recriar o objeto gera um novo endereço de memória e aciona o ciclo de vida.
+      </p>
+    </div>
+
+    <input
+      id="card-object-input"
+      type="text"
+      aria-label="Modificar atributo nome do objeto"
+      [value]="draftObjectName()"
+      (input)="onObjectNameInput($event)"
+      [disabled]="!isMountedTarget()"
+      placeholder="Digite o valor de usuario.nome..."
+      class="w-full rounded border border-ng-border bg-ng-surface px-4 py-2 font-mono text-sm font-medium text-ng-text transition-colors placeholder:text-ng-text-subtle focus:border-ng-purple focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+    />
+
+    <div class="flex flex-wrap gap-2.5">
+      <button
+        type="button"
+        [disabled]="!isMountedTarget()"
+        (click)="mutateObject.emit()"
+        aria-label="Mutar atributo do objeto sem trocar referência"
+        class="cyber-button cyber-button-rose flex-1 px-3 py-2 text-xs"
+      >
+        Mutar atributo (obj.nome)
+      </button>
+
+      <button
+        type="button"
+        [disabled]="!isMountedTarget()"
+        (click)="recreateObject.emit()"
+        aria-label="Recriar objeto com nova referência"
+        class="cyber-button cyber-button-emerald flex-1 px-3 py-2 text-xs"
+      >
+        Recriar objeto (&#123; ...obj &#125;)
+      </button>
+    </div>
+  </div>
 </article>

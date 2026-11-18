@@ -21,11 +21,13 @@ describe('CodeDebugger', () => {
     fixture.detectChanges();
   });
 
-  it('should render card-demo.component.ts with active breakpoint line', () => {
+  it('should render card-demo.component.ts with active breakpoint line and object input', () => {
     expect(component).toBeTruthy();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('card-demo.component.ts');
     expect(text).toContain('Breakpoint: constructor()');
     expect(text).toContain('// [DEBUG] this = CardDemoComponent {} | texto() = undefined');
+    expect(text).toContain("readonly usuario = input({ nome: 'Ada Lovelace' });");
+    expect(text).toContain('// ref #1');
   });
 });
