@@ -118,4 +118,17 @@ describe('DomTree', () => {
     nodeBtn('ngOnInit').click();
     expect(emitted).toEqual(['ngOnInit']);
   });
+
+  it('should display ignored mutation stage summary when mutationIgnored is true', () => {
+    fixture.componentRef.setInput('cycleHooks', ['ngOnChanges']);
+    fixture.componentRef.setInput('hook', 'ngOnChanges');
+    fixture.componentRef.setInput('mounted', true);
+    fixture.componentRef.setInput('domText', 'Ada Lovelace');
+    fixture.componentRef.setInput('memoryText', 'Grace Hopper');
+    fixture.componentRef.setInput('mutationIgnored', true);
+    fixture.detectChanges();
+
+    expect(text()).toContain('ngOnChanges ignorado (mesma ref)');
+    expect(nodeBtn('ngOnInit').getAttribute('data-status')).toBe('skipped');
+  });
 });

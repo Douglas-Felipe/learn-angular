@@ -5,7 +5,7 @@ import {
   HookId,
   HookTheme,
 } from '../../interfaces/life-cycle.interface';
-import { HOOK_CODE_BLOCKS, HOOK_THEMES } from '../../utils/life-cycle.util';
+import { DEFAULT_OBJECT_NAME, HOOK_CODE_BLOCKS, HOOK_THEMES } from '../../utils/life-cycle.util';
 
 @Component({
   selector: 'app-code-debugger',
@@ -20,6 +20,10 @@ export class CodeDebugger {
   protected readonly inputLiteral = computed(
     () => this.step().memoryText || this.step().domText || this.draftText()
   );
+  protected readonly objectLiteral = computed(
+    () => this.step().memoryObjectName || this.step().domObjectName || DEFAULT_OBJECT_NAME
+  );
+  protected readonly objectRefLiteral = computed(() => this.step().objectRefId ?? 1);
 
   protected hookTheme(id: HookId): HookTheme {
     return HOOK_THEMES[id];

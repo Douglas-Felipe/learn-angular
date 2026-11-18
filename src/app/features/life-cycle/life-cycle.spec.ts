@@ -245,19 +245,77 @@ describe('LifeCycle', () => {
     form?.dispatchEvent(new Event('submit'));
     const internal = component as unknown as {
       destroy: () => void;
+      mutateObject: () => void;
+      recreateObject: () => void;
       prev: () => void;
       next: () => void;
       goToHook: (id: string) => void;
       draftText: { set: (val: string) => void };
+      draftObjectName: { set: (val: string) => void };
       mount: () => void;
     };
     internal.destroy();
+    internal.mutateObject();
+    internal.recreateObject();
     internal.prev();
     internal.next();
     internal.goToHook('constructor');
     internal.draftText.set('   ');
+    internal.draftObjectName.set('   ');
     internal.mount();
     fixture.detectChanges();
     expect(text()).toContain('Breakpoint: constructor()');
+    expect(text()).toContain("readonly usuario = input({ nome: 'Ada Lovelace' });");
+  });
+
+  it('should ignore ngOnChanges on object attribute mutation and trigger full update cycle on object recreation', () => {
+    const objInput = el().querySelector('#card-object-input') as HTMLInputElement;
+    objInput.value = 'Grace Hopper';
+    objInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    // 1. Mutar atributo sem trocar referência
+    clickButton('Mutar atributo');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    expect(text()).toContain('Ciclo ignorado (mesma referência)');
+    expect(text()).toContain('ngOnChanges ignorado (mesma ref)');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-warning');
+    expect(el().querySelector('[data-testid="mutation-ignored-alert"]')?.textContent).toContain(
+      'Mutação ignorada (ref #1 === ref #1)'
+    );
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('Ada Lovelace');
+    expect(text()).toContain('IGNORADO! ref #1 === ref #1');
+    expect(
+      el()
+        .querySelector('app-dom-tree button[data-hook="ngDoCheck"]')
+        ?.getAttribute('data-status')
+    ).toBe('skipped');
+
+    // 2. Recriar objeto com nova referência
+    objInput.value = 'Margaret Hamilton';
+    objInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    clickButton('Recriar objeto');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    expect(text()).toContain('Recebimento de input()');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-white');
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('Ada Lovelace');
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('ref #1');
+    expect(text()).toContain('Na memória (ref #2): { nome: "Margaret Hamilton" }');
+
+    // Avançar para ngAfterViewChecked -> DOM atualizado com o novo objeto e ref #2
+    const viewCheckedNode = el().querySelector(
+      'app-dom-tree button[data-hook="ngAfterViewChecked"]'
+    ) as HTMLButtonElement;
+    viewCheckedNode.click();
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngAfterViewChecked()');
+    expect(el().querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-success');
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain(
+      'Margaret Hamilton'
+    );
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('ref #2');
+    expect(text()).toContain('DOM sincronizado: "Margaret Hamilton"');
   });
 });

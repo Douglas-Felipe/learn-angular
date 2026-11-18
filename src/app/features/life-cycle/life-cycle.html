@@ -36,27 +36,35 @@
   <!-- Main Two-Column Debug Workspace -->
   <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
     <!-- Left Column: Demo Card + DOM Execution Tree -->
-    <div class="space-y-4 lg:col-span-5">
+    <div class="flex flex-col gap-6 lg:col-span-5">
       <app-demo-card
+        class="block"
         [step]="current()"
         [theme]="currentTheme()"
         [stepIndex]="stepIndex()"
         [totalSteps]="steps().length"
         [isPlaying]="isPlaying()"
         [isMountedTarget]="isMountedTarget()"
-        [(draftText)]="draftText"
+        [draftText]="draftText()"
+        (draftTextChange)="draftText.set($event)"
+        [draftObjectName]="draftObjectName()"
+        (draftObjectNameChange)="draftObjectName.set($event)"
         (prevStep)="prev()"
         (nextStep)="next()"
         (togglePlay)="togglePlay()"
         (submitText)="updateText()"
+        (mutateObject)="mutateObject()"
+        (recreateObject)="recreateObject()"
       />
 
       <app-dom-tree
+        class="block"
         [hook]="current().hook"
         [mounted]="current().mounted"
-        [domText]="current().domText"
-        [memoryText]="current().memoryText"
+        [domText]="domTreeDomValue()"
+        [memoryText]="domTreeMemoryValue()"
         [cycleHooks]="cycleHookIds()"
+        [mutationIgnored]="!!current().mutationIgnored"
         (selectHook)="goToHook($event)"
       />
     </div>

@@ -26,6 +26,9 @@ describe('dom-tree.util', () => {
     expect(resolveDomStageSummary('afterEveryRender', true, 'Pronto', 'Pronto').label).toBe(
       'DOM sincronizado: "Pronto"'
     );
+    const ignoredSummary = resolveDomStageSummary('ngOnChanges', true, 'Ada', 'Grace', true);
+    expect(ignoredSummary.label).toBe('ngOnChanges ignorado (mesma ref)');
+    expect(ignoredSummary.badgeClass).toContain('border-ng-warning');
   });
 
   it('should compute active, completed, upcoming, and skipped statuses across cycle hooks', () => {
