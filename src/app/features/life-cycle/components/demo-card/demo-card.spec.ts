@@ -60,7 +60,9 @@ describe('DemoCard', () => {
     expect(component.draftText()).toBe('Novo valor');
 
     const form = el.querySelector('form') as HTMLFormElement;
-    form.dispatchEvent(new Event('submit'));
+    const submitEvent = new Event('submit', { cancelable: true });
+    form.dispatchEvent(submitEvent);
+    expect(submitEvent.defaultPrevented).toBe(true);
     expect(submitted).toBe(true);
 
     const objInput = el.querySelector('#card-object-input') as HTMLInputElement;
@@ -68,11 +70,62 @@ describe('DemoCard', () => {
     objInput.dispatchEvent(new Event('input'));
     expect(component.draftObjectName()).toBe('Grace Hopper');
 
+    // Null event target fallback to empty string
+    const internal = component as unknown as {
+      onTextInput: (e: Event) => void;
+      onObjectNameInput: (e: Event) => void;
+    };
+    internal.onTextInput({ target: null } as unknown as Event);
+    expect(component.draftText()).toBe('');
+    internal.onObjectNameInput({ target: null } as unknown as Event);
+    expect(component.draftObjectName()).toBe('');
+
     buttons.find((b) => b.textContent?.includes('Mutar atributo'))?.click();
     expect(mutated).toBe(true);
 
     buttons.find((b) => b.textContent?.includes('Recriar objeto'))?.click();
     expect(recreated).toBe(true);
+  });
+
+  it('should evaluate hasPendingObjectChange strictly across mounted, mutationIgnored, and object name states', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const recreateStep = buildObjectRecreateSteps('Olá', 'Ada Lovelace', 'Grace Hopper', 1, 2)[0];
+
+    // Unmounted with differing object names -> not pending
+    fixture.componentRef.setInput('step', { ...recreateStep, mounted: false });
+    fixture.detectChanges();
+    expect(el.querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-zinc-300');
+    expect(el.textContent).not.toContain('Na memória (ref #');
+
+    // Mounted with missing memoryObjectName -> not pending
+    fixture.componentRef.setInput('step', {
+      ...recreateStep,
+      mounted: true,
+      memoryObjectName: '',
+      domObjectName: 'Ada Lovelace',
+    });
+    fixture.detectChanges();
+    expect(el.querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-success');
+
+    // Mounted with missing domObjectName -> not pending
+    fixture.componentRef.setInput('step', {
+      ...recreateStep,
+      mounted: true,
+      memoryObjectName: 'Grace Hopper',
+      domObjectName: '',
+    });
+    fixture.detectChanges();
+    expect(el.querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-success');
+
+    // Mounted with identical memory and dom object names -> not pending
+    fixture.componentRef.setInput('step', {
+      ...recreateStep,
+      mounted: true,
+      memoryObjectName: 'Grace Hopper',
+      domObjectName: 'Grace Hopper',
+    });
+    fixture.detectChanges();
+    expect(el.querySelector('[data-testid="dom-render-card"]')?.className).toContain('border-ng-success');
   });
 
   it('should render pending object change, ignored mutation, and mounted card without object metadata', () => {

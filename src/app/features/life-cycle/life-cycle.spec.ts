@@ -318,4 +318,175 @@ describe('LifeCycle', () => {
     expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('ref #2');
     expect(text()).toContain('DOM sincronizado: "Margaret Hamilton"');
   });
+
+  it('should stop active playback timer on pause, navigation, mutations, mount, destroy, and component destruction', () => {
+    vi.useFakeTimers();
+
+    // Pause must actually clear interval (advancing time should not move step)
+    clickButton('Play');
+    vi.advanceTimersByTime(1100);
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+
+    clickButton('Pausar');
+    vi.advanceTimersByTime(1100 * 3);
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    expect(text()).toContain('Play');
+
+    // Resuming from middle step should NOT reset to step 0
+    clickButton('Play');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    vi.advanceTimersByTime(1100);
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngOnInit()');
+
+    // prev() stops playback
+    clickButton('Hook anterior');
+    expect(text()).toContain('Play');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    vi.advanceTimersByTime(1100 * 2);
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+
+    // goToHook() stops playback
+    clickButton('Play');
+    (el().querySelector('app-dom-tree button[data-hook="ngDoCheck"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(text()).toContain('Play');
+    expect(text()).toContain('Breakpoint: ngDoCheck()');
+
+    // updateText() stops playback, resets stepIndex to 0, and syncs draftText to fallback
+    clickButton('Play');
+    const textInput = el().querySelector('#card-text-input') as HTMLInputElement;
+    textInput.value = '   ';
+    textInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    clickButton('Atualizar');
+    expect(text()).toContain('Play');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    expect(textInput.value).toBe('Texto Atualizado!');
+
+    // Advance to step 2 before mutateObject() -> stops playback, resets to step 0, syncs draftObjectName
+    (el().querySelector('app-dom-tree button[data-hook="ngAfterContentChecked"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(text()).toContain('Breakpoint: ngAfterContentChecked()');
+    clickButton('Play');
+    const objInput = el().querySelector('#card-object-input') as HTMLInputElement;
+    objInput.value = '   ';
+    objInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    clickButton('Mutar atributo');
+    expect(text()).toContain('Play');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    expect(objInput.value).toBe('Alan Turing');
+
+    // recreateObject() twice -> increments ref #1 -> #2 -> #3, stops playback, resets to step 0
+    clickButton('Recriar objeto');
+    expect(text()).toContain('Na memória (ref #2): { nome: "Alan Turing" }');
+    (el().querySelector('app-dom-tree button[data-hook="ngAfterViewChecked"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    clickButton('Play');
+    objInput.value = 'Linus Torvalds';
+    objInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    clickButton('Recriar objeto');
+    expect(text()).toContain('Play');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('Alan Turing');
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('ref #2');
+    expect(text()).toContain('Na memória (ref #3): { nome: "Linus Torvalds" }');
+    expect(objInput.value).toBe('Linus Torvalds');
+
+    // destroy() stops playback and resets stepIndex to 0
+    (el().querySelector('app-dom-tree button[data-hook="ngDoCheck"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    clickButton('Play');
+    clickButton('Destruir');
+    expect(text()).toContain('Play');
+    expect(text()).toContain('Breakpoint: ngOnDestroy()');
+
+    // mount() stops playback, trims values, resets refId to 1, committedObjectName, and stepIndex to 0
+    textInput.value = '  Texto Limpo  ';
+    textInput.dispatchEvent(new Event('input'));
+    objInput.value = '  Katherine Johnson  ';
+    objInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    clickButton('Montar');
+    expect(text()).toContain('Breakpoint: constructor()');
+    expect(textInput.value).toBe('Texto Limpo');
+    expect(objInput.value).toBe('Katherine Johnson');
+    expect(text()).toContain("readonly texto = input('Texto Limpo');");
+    expect(text()).toContain('// ref #1');
+
+    clickButton('Próximo hook');
+    expect(text()).toContain('Breakpoint: ngOnChanges()');
+    expect(text()).toContain("readonly usuario = input({ nome: 'Katherine Johnson' });");
+
+    // Calling mount while playing at a later step stops timer and resets to step 0
+    (el().querySelector('app-dom-tree button[data-hook="ngDoCheck"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    clickButton('Play');
+    clickButton('Montar');
+    expect(text()).toContain('Play');
+    expect(text()).toContain('Breakpoint: constructor()');
+
+    // Component destroy clears interval via DestroyRef
+    const clearSpy = vi.spyOn(globalThis, 'clearInterval');
+    clickButton('Play');
+    fixture.destroy();
+    expect(clearSpy).toHaveBeenCalled();
+    clearSpy.mockRestore();
+  });
+
+  it('should enforce stepIndex boundaries and keep state unchanged when unmounted or hook is absent', () => {
+    const internal = component as unknown as {
+      stepIndex: () => number;
+      steps: () => { hook: string }[];
+      prev: () => void;
+      next: () => void;
+      goToHook: (id: string) => void;
+      updateText: () => void;
+      destroy: () => void;
+      mutateObject: () => void;
+      recreateObject: () => void;
+    };
+
+    // prev() at index 0 stays at 0
+    expect(internal.stepIndex()).toBe(0);
+    internal.prev();
+    expect(internal.stepIndex()).toBe(0);
+
+    // goToHook() for hook absent from current cycle keeps index unchanged
+    internal.goToHook('ngOnDestroy');
+    expect(internal.stepIndex()).toBe(0);
+
+    // next() at last step stays at last step
+    internal.goToHook('afterEveryRender');
+    const lastIdx = internal.steps().length - 1;
+    expect(internal.stepIndex()).toBe(lastIdx);
+    internal.next();
+    expect(internal.stepIndex()).toBe(lastIdx);
+
+    // When unmounted, updateText/mutateObject/recreateObject/destroy must not alter steps
+    clickButton('Destruir');
+    expect(internal.steps()).toHaveLength(1);
+    expect(internal.steps()[0].hook).toBe('ngOnDestroy');
+
+    internal.updateText();
+    expect(internal.steps()).toHaveLength(1);
+    expect(internal.steps()[0].hook).toBe('ngOnDestroy');
+
+    internal.mutateObject();
+    expect(internal.steps()).toHaveLength(1);
+    expect(internal.steps()[0].hook).toBe('ngOnDestroy');
+
+    internal.recreateObject();
+    expect(internal.steps()).toHaveLength(1);
+    expect(internal.steps()[0].hook).toBe('ngOnDestroy');
+
+    internal.destroy();
+    expect(internal.steps()).toHaveLength(1);
+    expect(internal.steps()[0].hook).toBe('ngOnDestroy');
+  });
 });
