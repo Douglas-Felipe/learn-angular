@@ -56,6 +56,7 @@ A plataforma é modular e foi desenhada para cobrir os conceitos fundamentais e 
 - **[Angular](https://angular.dev/):** Standalone components, Signals, control flow e arquitetura moderna.
 - **[Tailwind CSS](https://tailwindcss.com/):** Estilização utilitária com design system consistente e responsivo.
 - **[Vitest](https://vitest.dev/):** Suíte rápida e moderna para testes automatizados unitários e de componentes.
+- **[Stryker Mutator](https://stryker-mutator.io/):** Testes de mutação com threshold mínimo obrigatório de **90%** no desenvolvimento e no CI/CD.
 
 ---
 
@@ -87,7 +88,18 @@ A plataforma é modular e foi desenhada para cobrir os conceitos fundamentais e 
 4. **Acesse no navegador:**
    Abra [http://localhost:4200/](http://localhost:4200/) para explorar a aplicação.
 
-5. **Executar os testes:**
+5. **Executar os testes unitários e cobertura:**
    ```bash
    npm test
+   npm run test:coverage
    ```
+
+6. **Executar os testes de mutação (score mínimo de 90%):**
+   ```bash
+   # Execução completa
+   npm run test:mutation
+
+   # Execução incremental (para o desenvolvimento)
+   npm run test:mutation:incremental
+   ```
+   O relatório detalhado em HTML é gerado em `reports/mutation/mutation.html`.
