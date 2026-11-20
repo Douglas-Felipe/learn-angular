@@ -24,6 +24,27 @@ const testRoutes: AppRoute[] = [
     path: 'fallback',
     component: DummyPage,
   },
+  {
+    path: 'data-title',
+    component: DummyPage,
+    data: { title: 'Custom Data Title', docsUrl: 'https://angular.dev/data' },
+  },
+  {
+    path: 'resolved-title',
+    component: DummyPage,
+    title: () => 'Resolved Function Title',
+  },
+  {
+    path: 'nested',
+    children: [
+      {
+        path: 'child',
+        component: DummyPage,
+        title: 'Nested Child',
+        data: { docsUrl: 'https://angular.dev/nested' },
+      },
+    ],
+  },
 ];
 
 describe('injectActiveRouteData', () => {
@@ -66,6 +87,34 @@ describe('injectActiveRouteData', () => {
     TestBed.runInInjectionContext(() => {
       const routeData = injectActiveRouteData();
       expect(routeData().title).toBe(DEFAULT_PAGE_TITLE);
+      expect(routeData().docsUrl).toBe(DEFAULT_DOCS_URL);
+    });
+  });
+
+  it('should fall back to route data.title when snapshot.title and routeConfig.title are absent', async () => {
+    await router.navigateByUrl('/data-title');
+
+    TestBed.runInInjectionContext(() => {
+      const routeData = injectActiveRouteData();
+      expect(routeData().title).toBe('Custom Data Title');
+      expect(routeData().docsUrl).toBe('https://angular.dev/data');
+    });
+  });
+
+  it('should resolve deepest child route metadata and function-based titles', async () => {
+    await router.navigateByUrl('/nested/child');
+
+    TestBed.runInInjectionContext(() => {
+      const routeData = injectActiveRouteData();
+      expect(routeData().title).toBe('Nested Child');
+      expect(routeData().docsUrl).toBe('https://angular.dev/nested');
+    });
+
+    await router.navigateByUrl('/resolved-title');
+
+    TestBed.runInInjectionContext(() => {
+      const routeData = injectActiveRouteData();
+      expect(routeData().title).toBe('Resolved Function Title');
       expect(routeData().docsUrl).toBe(DEFAULT_DOCS_URL);
     });
   });

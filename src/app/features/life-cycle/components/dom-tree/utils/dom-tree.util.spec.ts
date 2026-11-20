@@ -11,21 +11,26 @@ describe('dom-tree.util', () => {
   });
 
   it('should resolve DOM stage summary for destroyed, unmounted, pending, and synchronized states', () => {
-    expect(resolveDomStageSummary('ngOnDestroy', false, '', '').label).toBe(
-      'DOM removido da tela'
-    );
-    expect(resolveDomStageSummary('constructor', false, '', '').label).toBe(
-      'DOM ainda não montado'
-    );
-    expect(resolveDomStageSummary('ngOnInit', false, '', 'Olá').label).toBe(
-      'Memória: "Olá" • DOM vazio'
-    );
-    expect(resolveDomStageSummary('ngDoCheck', true, 'Antes', 'Depois').label).toBe(
-      'DOM: "Antes" → Pendente: "Depois"'
-    );
-    expect(resolveDomStageSummary('afterEveryRender', true, 'Pronto', 'Pronto').label).toBe(
-      'DOM sincronizado: "Pronto"'
-    );
+    const destroyed = resolveDomStageSummary('ngOnDestroy', false, '', '');
+    expect(destroyed.label).toBe('DOM removido da tela');
+    expect(destroyed.badgeClass).toContain('border-ng-error');
+
+    const unmountedEmpty = resolveDomStageSummary('constructor', false, '', '');
+    expect(unmountedEmpty.label).toBe('DOM ainda não montado');
+    expect(unmountedEmpty.badgeClass).toContain('border-ng-border');
+
+    const unmountedWithMem = resolveDomStageSummary('ngOnInit', false, '', 'Olá');
+    expect(unmountedWithMem.label).toBe('Memória: "Olá" • DOM vazio');
+    expect(unmountedWithMem.badgeClass).toContain('border-ng-border');
+
+    const pending = resolveDomStageSummary('ngDoCheck', true, 'Antes', 'Depois');
+    expect(pending.label).toBe('DOM: "Antes" → Pendente: "Depois"');
+    expect(pending.badgeClass).toContain('border-ng-warning');
+
+    const synced = resolveDomStageSummary('afterEveryRender', true, 'Pronto', 'Pronto');
+    expect(synced.label).toBe('DOM sincronizado: "Pronto"');
+    expect(synced.badgeClass).toContain('border-ng-success');
+
     const ignoredSummary = resolveDomStageSummary('ngOnChanges', true, 'Ada', 'Grace', true);
     expect(ignoredSummary.label).toBe('ngOnChanges ignorado (mesma ref)');
     expect(ignoredSummary.badgeClass).toContain('border-ng-warning');
@@ -45,5 +50,14 @@ describe('dom-tree.util', () => {
     expect(updateCycleStatuses.ngDoCheck).toBe('active');
     expect(updateCycleStatuses.ngAfterViewChecked).toBe('upcoming');
     expect(updateCycleStatuses.ngOnInit).toBe('skipped');
+
+    const outsideCycleStatuses = resolveTreeNodeStatuses('ngOnDestroy', [
+      'ngOnChanges',
+      'ngDoCheck',
+    ]);
+    expect(outsideCycleStatuses.ngOnDestroy).toBe('active');
+    expect(outsideCycleStatuses.ngOnChanges).toBe('upcoming');
+    expect(outsideCycleStatuses.ngDoCheck).toBe('upcoming');
+    expect(outsideCycleStatuses.ngOnInit).toBe('skipped');
   });
 });

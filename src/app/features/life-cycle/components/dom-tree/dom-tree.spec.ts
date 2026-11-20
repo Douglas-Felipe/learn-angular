@@ -107,7 +107,7 @@ describe('DomTree', () => {
     expect(text()).toContain('DOM removido da tela');
   });
 
-  it('should emit selectHook when clicking an active-cycle tree node', () => {
+  it('should emit selectHook when clicking an active-cycle tree node and ignore skipped nodes', () => {
     const emitted: HookId[] = [];
     component.selectHook.subscribe((id) => emitted.push(id));
 
@@ -116,6 +116,10 @@ describe('DomTree', () => {
     fixture.detectChanges();
 
     nodeBtn('ngOnInit').click();
+    expect(emitted).toEqual(['ngOnInit']);
+
+    const internal = component as unknown as { onSelectNode: (id: HookId) => void };
+    internal.onSelectNode('ngOnDestroy');
     expect(emitted).toEqual(['ngOnInit']);
   });
 

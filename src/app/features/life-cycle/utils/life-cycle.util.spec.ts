@@ -22,26 +22,73 @@ describe('life-cycle.util', () => {
   });
 
   it('should build mount, update, and destroy step sequences accurately', () => {
-    const mountSteps = buildMountSteps('Inicial');
+    const mountSteps = buildMountSteps('Inicial', 'Grace Hopper', 4);
     expect(mountSteps).toHaveLength(10);
-    expect(mountSteps[0].hook).toBe('constructor');
-    expect(mountSteps[0].mounted).toBe(false);
-    expect(mountSteps[6].hook).toBe('ngAfterViewInit');
-    expect(mountSteps[6].mounted).toBe(true);
-    expect(mountSteps[6].domText).toBe('Inicial');
+    expect(mountSteps.map((s) => s.hook)).toEqual([
+      'constructor',
+      'ngOnChanges',
+      'ngOnInit',
+      'ngDoCheck',
+      'ngAfterContentInit',
+      'ngAfterContentChecked',
+      'ngAfterViewInit',
+      'ngAfterViewChecked',
+      'afterNextRender',
+      'afterEveryRender',
+    ]);
+    mountSteps.forEach((step, idx) => {
+      const isMounted = idx >= 6;
+      expect(step.mounted).toBe(isMounted);
+      expect(step.previousText).toBe('');
+      expect(step.domText).toBe(isMounted ? 'Inicial' : '');
+      expect(step.memoryText).toBe(idx === 0 ? '' : 'Inicial');
+      expect(step.domObjectName).toBe(isMounted ? 'Grace Hopper' : '');
+      expect(step.memoryObjectName).toBe(idx === 0 ? '' : 'Grace Hopper');
+      expect(step.objectRefId).toBe(4);
+      expect(step.previousObjectRefId).toBe(4);
+      expect(step.explanation.length).toBeGreaterThan(0);
+      expect(step.debugLine.length).toBeGreaterThan(0);
+    });
 
-    const updateSteps = buildUpdateSteps('Inicial', 'Novo');
+    const updateSteps = buildUpdateSteps('Inicial', 'Novo', 'Grace Hopper', 3);
     expect(updateSteps).toHaveLength(5);
-    expect(updateSteps[0].domText).toBe('Inicial');
-    expect(updateSteps[0].memoryText).toBe('Novo');
-    expect(updateSteps[3].hook).toBe('ngAfterViewChecked');
-    expect(updateSteps[3].domText).toBe('Novo');
+    expect(updateSteps.map((s) => s.hook)).toEqual([
+      'ngOnChanges',
+      'ngDoCheck',
+      'ngAfterContentChecked',
+      'ngAfterViewChecked',
+      'afterEveryRender',
+    ]);
+    updateSteps.forEach((step, idx) => {
+      const applied = idx >= 3;
+      expect(step.mounted).toBe(true);
+      expect(step.domText).toBe(applied ? 'Novo' : 'Inicial');
+      expect(step.memoryText).toBe('Novo');
+      expect(step.previousText).toBe('Inicial');
+      expect(step.domObjectName).toBe('Grace Hopper');
+      expect(step.memoryObjectName).toBe('Grace Hopper');
+      expect(step.objectRefId).toBe(3);
+      expect(step.previousObjectRefId).toBe(3);
+      expect(step.explanation.length).toBeGreaterThan(0);
+      expect(step.debugLine.length).toBeGreaterThan(0);
+    });
 
-    const destroySteps = buildDestroySteps('Novo');
+    const destroySteps = buildDestroySteps('Novo', 'Grace Hopper', 5);
     expect(destroySteps).toHaveLength(1);
-    expect(destroySteps[0].hook).toBe('ngOnDestroy');
-    expect(destroySteps[0].mounted).toBe(false);
-    expect(destroySteps[0].previousText).toBe('Novo');
+    expect(destroySteps[0]).toMatchObject({
+      hook: 'ngOnDestroy',
+      mounted: false,
+      domText: '',
+      memoryText: '',
+      previousText: 'Novo',
+      domObjectName: '',
+      memoryObjectName: '',
+      objectRefId: 5,
+      previousObjectRefId: 5,
+    });
+    expect(destroySteps[0].explanation.length).toBeGreaterThan(0);
+    expect(destroySteps[0].debugLine).toContain('Novo');
+    expect(destroySteps[0].debugLine).toContain('Grace Hopper');
   });
 
   it('should resolve next card text with fallback alternation when input is blank or unchanged', () => {
@@ -56,15 +103,19 @@ describe('life-cycle.util', () => {
   it('should resolve DOM card classes for destroy, unmounted, pending, and mounted states', () => {
     const [destroyStep] = buildDestroySteps('Teste');
     expect(resolveDomCardClasses(destroyStep, false).card).toContain('border-ng-error');
+    expect(resolveDomCardClasses(destroyStep, false).title).toContain('text-ng-error');
 
     const [unmountedStep] = buildMountSteps('Teste');
     expect(resolveDomCardClasses(unmountedStep, false).card).toContain('border-zinc-300');
+    expect(resolveDomCardClasses(unmountedStep, false).title).toContain('text-zinc-600');
 
     const [pendingStep] = buildUpdateSteps('Antigo', 'Novo');
     expect(resolveDomCardClasses(pendingStep, true).card).toContain('border-white');
+    expect(resolveDomCardClasses(pendingStep, true).title).toContain('text-ng-text');
 
     const syncedStep = buildUpdateSteps('Antigo', 'Novo')[3];
     expect(resolveDomCardClasses(syncedStep, false).card).toContain('border-ng-success');
+    expect(resolveDomCardClasses(syncedStep, false).title).toContain('text-ng-success');
 
     const [mutateStep] = buildObjectMutateSteps('Texto', 'Ada Lovelace', 'Grace Hopper', 1);
     expect(resolveDomCardClasses(mutateStep, false).card).toContain('border-ng-warning');
@@ -74,24 +125,46 @@ describe('life-cycle.util', () => {
   it('should build object mutate and recreate step sequences and resolve next object name', () => {
     const mutateSteps = buildObjectMutateSteps('Olá', 'Ada Lovelace', 'Grace Hopper', 2);
     expect(mutateSteps).toHaveLength(1);
-    expect(mutateSteps[0].hook).toBe('ngOnChanges');
-    expect(mutateSteps[0].mutationIgnored).toBe(true);
-    expect(mutateSteps[0].isObjectCycle).toBe(true);
-    expect(mutateSteps[0].domObjectName).toBe('Ada Lovelace');
-    expect(mutateSteps[0].memoryObjectName).toBe('Grace Hopper');
-    expect(mutateSteps[0].objectRefId).toBe(2);
+    expect(mutateSteps[0]).toMatchObject({
+      hook: 'ngOnChanges',
+      mounted: true,
+      domText: 'Olá',
+      memoryText: 'Olá',
+      previousText: 'Olá',
+      domObjectName: 'Ada Lovelace',
+      memoryObjectName: 'Grace Hopper',
+      objectRefId: 2,
+      previousObjectRefId: 2,
+      mutationIgnored: true,
+      isObjectCycle: true,
+    });
+    expect(mutateSteps[0].explanation.length).toBeGreaterThan(0);
     expect(mutateSteps[0].debugLine).toContain('IGNORADO! ref #2 === ref #2');
 
     const recreateSteps = buildObjectRecreateSteps('Olá', 'Ada Lovelace', 'Grace Hopper', 2, 3);
     expect(recreateSteps).toHaveLength(5);
-    expect(recreateSteps[0].hook).toBe('ngOnChanges');
-    expect(recreateSteps[0].mutationIgnored).toBe(false);
-    expect(recreateSteps[0].domObjectName).toBe('Ada Lovelace');
-    expect(recreateSteps[0].memoryObjectName).toBe('Grace Hopper');
-    expect(recreateSteps[0].previousObjectRefId).toBe(2);
-    expect(recreateSteps[0].objectRefId).toBe(3);
-    expect(recreateSteps[3].hook).toBe('ngAfterViewChecked');
-    expect(recreateSteps[3].domObjectName).toBe('Grace Hopper');
+    expect(recreateSteps.map((s) => s.hook)).toEqual([
+      'ngOnChanges',
+      'ngDoCheck',
+      'ngAfterContentChecked',
+      'ngAfterViewChecked',
+      'afterEveryRender',
+    ]);
+    recreateSteps.forEach((step, idx) => {
+      const applied = idx >= 3;
+      expect(step.mounted).toBe(true);
+      expect(step.domText).toBe('Olá');
+      expect(step.memoryText).toBe('Olá');
+      expect(step.previousText).toBe('Olá');
+      expect(step.domObjectName).toBe(applied ? 'Grace Hopper' : 'Ada Lovelace');
+      expect(step.memoryObjectName).toBe('Grace Hopper');
+      expect(step.previousObjectRefId).toBe(2);
+      expect(step.objectRefId).toBe(3);
+      expect(step.mutationIgnored).toBe(false);
+      expect(step.isObjectCycle).toBe(true);
+      expect(step.explanation.length).toBeGreaterThan(0);
+      expect(step.debugLine.length).toBeGreaterThan(0);
+    });
 
     expect(resolveNextObjectName(DEFAULT_OBJECT_NAME, 'Grace Hopper')).toBe('Grace Hopper');
     expect(resolveNextObjectName(DEFAULT_OBJECT_NAME, '   ')).toBe(FALLBACK_OBJECT_NAME);
