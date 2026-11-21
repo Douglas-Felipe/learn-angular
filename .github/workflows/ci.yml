@@ -1,9 +1,6 @@
 name: CI Quality Gate
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches-ignore:
       - main
@@ -19,6 +16,7 @@ concurrency:
 jobs:
   quality:
     name: Unit Tests, Mutation Tests (>=90%) & Build
+    if: github.event_name != 'push' || github.event.commits[0] != null
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
