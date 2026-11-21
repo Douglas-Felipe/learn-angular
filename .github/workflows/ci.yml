@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality:
-    name: Unit Tests, Mutation Tests (>=90%) & Build
+  unit-and-build:
+    name: Unit Tests (>=90% Coverage) & Build
     if: github.event_name != 'push' || github.event.commits[0] != null
     runs-on: ubuntu-latest
     steps:
@@ -34,8 +34,45 @@ jobs:
       - name: Run unit tests with coverage
         run: npm run test:coverage
 
+      - name: Build Angular application
+        run: npm run build
+
+  mutation:
+    name: Mutation Tests (>=90% Score, Incremental)
+    if: github.event_name != 'push' || github.event.commits[0] != null
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore Stryker incremental cache
+        id: stryker-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: reports/mutation/stryker-incremental.json
+          key: stryker-inc-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            stryker-inc-${{ github.ref_name }}-
+            stryker-inc-main-
+
       - name: Run mutation tests (min 90% score)
-        run: npm run test:mutation
+        run: npm run test:mutation:ci
+
+      - name: Save Stryker incremental cache
+        if: always() && steps.stryker-cache.outputs.cache-hit != 'true' && hashFiles('reports/mutation/stryker-incremental.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: reports/mutation/stryker-incremental.json
+          key: stryker-inc-${{ github.ref_name }}-${{ github.sha }}
 
       - name: Upload mutation report
         if: always()
@@ -44,6 +81,3 @@ jobs:
           name: mutation-report
           path: reports/mutation/
           retention-days: 14
-
-      - name: Build Angular application
-        run: npm run build
