@@ -30,6 +30,14 @@ describe('CodeDebugger', () => {
     expect(text).toContain("readonly texto = input('Olá, Angular!');");
     expect(text).toContain("readonly usuario = input({ nome: 'Ada Lovelace' });");
     expect(text).toContain('// ref #1');
+
+    const el = fixture.nativeElement as HTMLElement;
+    const activeBlock = el.querySelector('[data-phase-block="constructor"]') as HTMLElement;
+    const inactiveBlock = el.querySelector('[data-phase-block="ngOnInit"]') as HTMLElement;
+    expect(activeBlock.className).toContain('opacity-100');
+    expect(activeBlock.textContent).toContain('// [DEBUG]');
+    expect(inactiveBlock.className).toContain('opacity-45');
+    expect(inactiveBlock.textContent).not.toContain('// [DEBUG]');
   });
 
   it('should resolve inputLiteral, objectLiteral, and objectRefLiteral across all fallback branches', () => {
