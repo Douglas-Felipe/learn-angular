@@ -22,7 +22,7 @@ describe('Home', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the hero gradient title, active Hooks card, and inactive State and Browser cards', () => {
+  it('should render the hero gradient title, active Hooks and State cards, and inactive Browser card', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Angular');
     expect(compiled.textContent).toContain('por debaixo dos panos');
@@ -33,7 +33,7 @@ describe('Home', () => {
     const browserCard = compiled.querySelector('[data-testid="card-browser"]');
 
     expect(hooksCard?.getAttribute('href')).toBe('/life-cycle');
-    expect(stateCard?.getAttribute('aria-disabled')).toBe('true');
+    expect(stateCard?.getAttribute('href')).toBe('/change-detection');
     expect(browserCard?.getAttribute('aria-disabled')).toBe('true');
   });
 });

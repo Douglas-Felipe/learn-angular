@@ -355,98 +355,100 @@ html:not(.dark) {
     color: #a1a1aa;
     opacity: 0.6;
   }
-}
 
-button:not(:disabled),
-.ui-btn:not(:disabled) {
-  cursor: pointer;
-}
-
-.ui-btn {
-  border-radius: 8px;
-  transition:
-    transform 160ms var(--ease-out),
-    background-color 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease,
-    opacity 150ms ease;
-}
-
-.ui-btn:active:not(:disabled),
-.ng-pill-cta:active:not(:disabled) {
-  transform: scale(0.97);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .ui-btn:hover:not(:disabled),
-  .ng-pill-cta:hover:not(:disabled) {
-    filter: brightness(1.06);
+  button:not(:disabled),
+  .ui-btn:not(:disabled) {
+    cursor: pointer;
   }
-}
 
-.ui-pill {
-  transition:
-    transform 180ms var(--ease-out),
-    background-color 180ms var(--ease-out),
-    border-color 180ms var(--ease-out),
-    color 180ms var(--ease-out);
-}
-
-.ui-card-stage {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-  transition:
-    transform 220ms var(--ease-out),
-    opacity 220ms var(--ease-out),
-    border-color 200ms ease,
-    background-color 200ms ease;
-
-  @starting-style {
-    opacity: 0;
-    transform: scale(0.98) translateY(4px);
+  .ui-btn {
+    border-radius: 8px;
+    transition:
+      transform 160ms var(--ease-out),
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      opacity 150ms ease;
   }
-}
 
-.ui-item-card {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-  transition:
-    transform 220ms var(--ease-out),
-    opacity 220ms var(--ease-out),
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease;
-
-  @starting-style {
-    opacity: 0;
-    transform: scale(0.98) translateY(4px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
   .ui-btn:active:not(:disabled),
   .ng-pill-cta:active:not(:disabled) {
-    transform: none;
+    transform: scale(0.97);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-btn:hover:not(:disabled),
+    .ng-pill-cta:hover:not(:disabled) {
+      filter: brightness(1.06);
+    }
   }
 
   .ui-pill {
     transition:
-      background-color 150ms ease,
-      border-color 150ms ease,
-      color 150ms ease;
+      transform 180ms var(--ease-out),
+      background-color 180ms var(--ease-out),
+      border-color 180ms var(--ease-out),
+      color 180ms var(--ease-out),
+      opacity 180ms var(--ease-out);
   }
 
-  .ui-card-stage,
-  .ui-item-card {
+  .ui-card-stage {
+    opacity: 1;
+    transform: scale(1) translateY(0);
     transition:
-      opacity 180ms ease,
-      border-color 180ms ease,
-      background-color 180ms ease,
-      color 150ms ease;
+      transform 220ms var(--ease-out),
+      opacity 220ms var(--ease-out),
+      border-color 200ms ease,
+      background-color 200ms ease;
 
     @starting-style {
       opacity: 0;
+      transform: scale(0.98) translateY(4px);
+    }
+  }
+
+  .ui-item-card {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    transition:
+      transform 220ms var(--ease-out),
+      opacity 220ms var(--ease-out),
+      border-color 180ms ease,
+      background-color 180ms ease,
+      color 180ms ease;
+
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.98) translateY(4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-btn:active:not(:disabled),
+    .ng-pill-cta:active:not(:disabled) {
       transform: none;
+    }
+
+    .ui-pill {
+      transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease,
+        opacity 150ms ease;
+    }
+
+    .ui-card-stage,
+    .ui-item-card {
+      transition:
+        opacity 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease,
+        color 150ms ease;
+
+      @starting-style {
+        opacity: 0;
+        transform: none;
+      }
     }
   }
 }

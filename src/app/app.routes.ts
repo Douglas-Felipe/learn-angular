@@ -17,4 +17,11 @@ export const routes: AppRoute[] = [
       docsUrl: 'https://angular.dev/guide/components/lifecycle',
     },
   },
+  {
+    path: 'change-detection',
+    loadChildren: () =>
+      import('./features/change-detection/change-detection.routes').then(
+        (m) => m.CHANGE_DETECTION_ROUTES
+      ),
+  },
 ];

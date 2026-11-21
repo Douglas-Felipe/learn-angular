@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build & Test
+    name: Unit Tests (>=90% Coverage) & Build Pages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -44,17 +44,6 @@ jobs:
       - name: Run unit tests with coverage
         run: npm run test:coverage
 
-      - name: Run mutation tests (min 90% score)
-        run: npm run test:mutation
-
-      - name: Upload mutation report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-mutation-report
-          path: reports/mutation/
-          retention-days: 14
-
       - name: Configure GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -70,9 +59,52 @@ jobs:
         with:
           path: dist/learn-angular/browser
 
+  mutation:
+    name: Mutation Tests (>=90% Score, Incremental)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore Stryker incremental cache
+        id: stryker-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: reports/mutation/stryker-incremental.json
+          key: stryker-inc-main-${{ github.sha }}
+          restore-keys: |
+            stryker-inc-main-
+
+      - name: Run mutation tests (min 90% score)
+        run: npm run test:mutation:ci
+
+      - name: Save Stryker incremental cache
+        if: success() && steps.stryker-cache.outputs.cache-hit != 'true' && hashFiles('reports/mutation/stryker-incremental.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: reports/mutation/stryker-incremental.json
+          key: stryker-inc-main-${{ github.sha }}
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-mutation-report
+          path: reports/mutation/
+          retention-days: 14
+
   deploy:
     name: Deploy to GitHub Pages
-    needs: build
+    needs: [build, mutation]
     runs-on: ubuntu-latest
     environment:
       name: github-pages

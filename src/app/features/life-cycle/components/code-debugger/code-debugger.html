@@ -1,77 +1,22 @@
-<section
-  aria-label="Código Angular em Modo Debug"
-  class="ng-code-container rounded-2xl border-2 border-indigo-500/20 bg-ng-code dark:border-indigo-500/30"
+<app-code-debugger-shell
+  ariaLabel="Código Angular em Modo Debug"
+  fileName="card-demo.component.ts"
+  [breakpointLabel]="theme().label"
+  [breakpointBadgeClasses]="theme().badgeClasses"
+  [breakpointDotClass]="theme().dotClass"
+  [blocks]="blockViews()"
 >
-  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-500/20 bg-ng-surface px-4 py-3 dark:border-indigo-500/30">
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-1.5" aria-hidden="true">
-        <span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span>
-        <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
-        <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-      </div>
-      <div class="flex items-center gap-1.5">
-        <span class="rounded border border-cyan-500/30 bg-cyan-100 px-2 py-0.5 font-mono text-xs font-bold text-cyan-800 dark:border-cyan-400/50 dark:bg-cyan-950/50 dark:text-cyan-300">
-          TS
-        </span>
-        <span class="font-mono text-sm font-bold text-ng-text">
-          card-demo.component.ts
-        </span>
-      </div>
+  <ng-container debuggerClassHeader>
+    <div><span class="text-ng-secondary">&#64;Component</span>(&#123; selector: <span class="text-ng-success">'app-card-demo'</span> &#125;)</div>
+    <div><span class="text-ng-secondary">export class</span> <span class="text-ng-info">CardDemoComponent</span> &#123;</div>
+    <div class="pl-4">
+      <span class="text-ng-secondary">readonly</span> texto =
+      <span class="text-ng-info">input</span>(<span class="text-ng-success">'{{ inputLiteral() }}'</span>);
     </div>
-
-    <div>
-      <span [class]="'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1 font-mono text-xs font-bold ' + theme().badgeClasses">
-        <span [class]="'h-2 w-2 rounded-full ' + theme().dotClass"></span>
-        Breakpoint: {{ theme().label }}
-      </span>
+    <div class="pl-4">
+      <span class="text-ng-secondary">readonly</span> usuario =
+      <span class="text-ng-info">input</span>(&#123; nome: <span class="text-ng-success">'{{ objectLiteral() }}'</span> &#125;);
+      <span class="text-xs text-ng-text-subtle">// ref #{{ objectRefLiteral() }}</span>
     </div>
-  </div>
-
-  <div class="space-y-1 overflow-x-auto p-4 font-mono text-sm leading-relaxed">
-    <!-- Component Decorator & Signal Input -->
-    <div class="px-3 py-1 text-ng-text-subtle">
-      <div><span class="text-ng-secondary">&#64;Component</span>(&#123; selector: <span class="text-ng-success">'app-card-demo'</span> &#125;)</div>
-      <div><span class="text-ng-secondary">export class</span> <span class="text-ng-info">CardDemoComponent</span> &#123;</div>
-      <div class="pl-4">
-        <span class="text-ng-secondary">readonly</span> texto =
-        <span class="text-ng-info">input</span>(<span class="text-ng-success">'{{ inputLiteral() }}'</span>);
-      </div>
-      <div class="pl-4">
-        <span class="text-ng-secondary">readonly</span> usuario =
-        <span class="text-ng-info">input</span>(&#123; nome: <span class="text-ng-success">'{{ objectLiteral() }}'</span> &#125;);
-        <span class="text-xs text-ng-text-subtle">// ref #{{ objectRefLiteral() }}</span>
-      </div>
-    </div>
-
-    @for (block of codeBlocks(); track block.id) {
-      @let blockTheme = hookTheme(block.id);
-      @let isActive = step().hook === block.id;
-      <div
-        [class]="
-          'rounded-r-lg border-l-4 px-3 py-1.5 transition-colors duration-150 ' +
-          (isActive ? blockTheme.codeActiveClasses : 'border-transparent opacity-45')
-        "
-      >
-        <div class="flex items-center gap-2">
-          <span
-            [class]="'w-3 text-center ' + (isActive ? blockTheme.textClass : 'text-transparent')"
-          >
-            ●
-          </span>
-          <span class="text-ng-info">{{ block.signature }}</span>
-          <span class="text-ng-text-subtle">&#123;</span>
-        </div>
-        <div class="pl-8 text-ng-text-subtle">{{ block.descriptionComment }}</div>
-        <div class="pl-8 text-ng-text-muted">{{ block.exampleLine }}</div>
-        @if (isActive) {
-          <div [class]="'pl-8 text-xs font-semibold ' + blockTheme.textClass">
-            // [DEBUG] {{ step().debugLine }}
-          </div>
-        }
-        <div class="pl-5 text-ng-text-subtle">{{ block.closingBrace ?? '}' }}</div>
-      </div>
-    }
-
-    <div class="px-3 py-1 text-ng-text-subtle">&#125;</div>
-  </div>
-</section>
+  </ng-container>
+</app-code-debugger-shell>

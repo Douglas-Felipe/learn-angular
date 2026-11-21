@@ -1,0 +1,243 @@
+<div class="mx-auto max-w-5xl space-y-8 pb-10">
+  <!-- Hero / Header -->
+  <header class="space-y-3 border-b border-ng-border pb-6">
+    <h1 class="display-title text-balance text-3xl font-black tracking-tight text-ng-text sm:text-4xl">
+      Como o <span class="ng-gradient-text">Angular</span> sabe o que atualizar na tela?
+    </h1>
+
+    <p class="max-w-3xl text-sm leading-[1.65] text-ng-text-muted sm:text-base">
+      De um vigia que checa o prédio inteiro (<code class="font-mono text-ng-text">Zone.js</code>),
+      passando por placas de "Não Perturbe" (<code class="font-mono text-ng-text">OnPush</code>),
+      até sensores que apontam exatamente qual apartamento mudou (<code class="font-mono text-ng-text">Signals</code>): 
+      <b class="text-ng-text">veja como o Angular evoluiu para atualizar apenas o necessário.</b>
+    </p>
+  </header>
+
+  <!-- Seção 1: Zone.js -->
+  <section
+    aria-labelledby="summary-zone-heading"
+    class="ng-card ui-card-stage space-y-4 p-6"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <span
+        class="inline-flex items-center rounded border border-ng-warning/40 bg-ng-warning/15 px-2.5 py-0.5 font-mono text-xs font-semibold text-ng-warning"
+      >
+        1. Zone.js (Angular Clássico)
+      </span>
+      <span class="font-mono text-xs text-ng-text-subtle">Estratégia padrão antiga: Eager como Default</span>
+    </div>
+
+    <h2 id="summary-zone-heading" class="display-title text-xl font-bold text-ng-text">
+      O Porteiro Curioso que Bate em Todas as Portas
+    </h2>
+
+    <p class="text-sm leading-[1.65] text-ng-text-muted">
+      Imagine um prédio cheio de apartamentos (seus componentes). O <strong class="text-ng-text">Zone.js</strong>
+      funcionava como um porteiro com ouvido super apurado: sempre que acontecia qualquer barulho no prédio
+      — um clique de botão, um <code class="font-mono text-ng-text">setTimeout</code> ou uma resposta da API — ele
+      sabia que <em>algo</em> tinha acontecido, mas <strong class="text-ng-text">não fazia ideia de em qual apartamento</strong>.
+    </p>
+
+    <div class="grid grid-cols-1 gap-3 pt-1 md:grid-cols-3">
+      <div class="rounded-xl border border-ng-border bg-ng-bg p-4 space-y-1">
+        <span class="font-mono text-xs font-bold text-ng-info">Passo 1 • Barulho</span>
+        <p class="text-xs leading-relaxed text-ng-text-muted">
+          Um clique, timer ou resposta HTTP acontece em qualquer ponto da aplicação.
+        </p>
+      </div>
+      <div class="rounded-xl border border-ng-border bg-ng-bg p-4 space-y-1">
+        <span class="font-mono text-xs font-bold text-ng-warning">Passo 2 • Alarme geral</span>
+        <p class="text-xs leading-relaxed text-ng-text-muted">
+          O Zone.js avisa o Angular: "Ei, algo rodou! Melhor checar se a tela mudou."
+        </p>
+      </div>
+      <div class="rounded-xl border border-ng-border bg-ng-bg p-4 space-y-1">
+        <span class="font-mono text-xs font-bold text-ng-primary">Passo 3 • Porta em porta</span>
+        <p class="text-xs leading-relaxed text-ng-text-muted">
+          No modo <strong class="text-ng-text">Eager</strong>, o Angular bate em todas as portas do térreo à cobertura comparando tudo.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 2: OnPush e Erros Comuns -->
+  <section
+    aria-labelledby="summary-onpush-heading"
+    class="ng-card ui-card-stage space-y-5 p-6"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <span
+        class="inline-flex items-center rounded border border-ng-error/40 bg-ng-error/15 px-2.5 py-0.5 font-mono text-xs font-semibold text-ng-error"
+      >
+        2. OnPush &amp; Armadilhas Clássicas
+      </span>
+      <span class="font-mono text-xs text-ng-text-subtle">Por que a tela às vezes não atualizava</span>
+    </div>
+
+    <div class="space-y-2">
+      <h2 id="summary-onpush-heading" class="display-title text-xl font-bold text-ng-text">
+        A Placa de "Não Perturbe" na Porta do Apartamento
+      </h2>
+      <p class="text-sm leading-[1.65] text-ng-text-muted">
+        Para evitar que o porteiro batesse em todo mundo à toa, o  <strong class="text-ng-text">Angular</strong> criou o <code class="font-mono text-ng-text">OnPush</code>:
+        cada componente pendura uma placa de <strong class="text-ng-text">"Não Perturbe"</strong>. O Angular só entra nele
+        quando recebe um aviso claro (um clique dentro dele, um novo valor de <code class="font-mono text-ng-text">input()</code>,
+        <code class="font-mono text-ng-text">async</code> pipe ou <code class="font-mono text-ng-text">markForCheck()</code>).
+        É daí que surgem os 3 erros mais comuns:
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      @for (err of onPushErrors; track err.id) {
+        <article class="ui-item-card flex flex-col justify-between space-y-3 rounded-xl border border-ng-border bg-ng-bg p-4">
+          <div class="space-y-2">
+            <span class="inline-block rounded border border-ng-error/35 bg-ng-error/10 px-2 py-0.5 font-mono text-[11px] font-semibold text-ng-error">
+              {{ err.tag }}
+            </span>
+            <h3 class="display-title text-base font-bold text-ng-text">
+              {{ err.title }}
+            </h3>
+            <p class="text-xs italic leading-relaxed text-ng-text-muted">
+              "{{ err.analogy }}"
+            </p>
+            <p class="text-xs leading-relaxed text-ng-text-subtle">
+              {{ err.symptom }}
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <p class="rounded-lg border border-ng-border bg-ng-surface px-2.5 py-2 font-mono text-[11px] text-ng-text">
+              {{ err.fixHint }}
+            </p>
+            @if (err.exampleLink) {
+              <a
+                [routerLink]="err.exampleLink.route"
+                [attr.data-testid]="'error-example-' + err.id"
+                class="ng-link group inline-flex items-center gap-1 font-mono text-[11px] font-semibold"
+              >
+                <span>{{ err.exampleLink.label }}</span>
+                <span class="transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
+              </a>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <!-- Seção 3: Zoneless + Signals -->
+  <section
+    aria-labelledby="summary-signals-heading"
+    class="ng-card ui-card-stage space-y-4 p-6"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <span
+        class="inline-flex items-center rounded border border-ng-success/40 bg-ng-success/15 px-2.5 py-0.5 font-mono text-xs font-semibold text-ng-success"
+      >
+        3. Zoneless + Signals (Angular Moderno)
+      </span>
+      <span class="font-mono text-xs text-ng-text-subtle">OnPush padrão no Angular v22</span>
+    </div>
+
+    <h2 id="summary-signals-heading" class="display-title text-xl font-bold text-ng-text">
+      Notificação Direta por Assinatura (Entrega por GPS)
+    </h2>
+
+    <p class="text-sm leading-[1.65] text-ng-text-muted">
+      Com <strong class="text-ng-text">Signals</strong>, aposentamos o porteiro curioso (<code class="font-mono text-ng-text">Zone.js</code>).
+      Em vez de ouvir barulhos genéricos no prédio, cada <code class="font-mono text-ng-text">signal()</code> funciona como uma
+      lista de assinantes: ele sabe exatamente quais apartamentos exibem aquele valor na tela.
+    </p>
+
+    <div class="grid grid-cols-1 gap-3 pt-1 md:grid-cols-3">
+      <div class="rounded-xl border border-ng-success/35 bg-ng-success/10 p-4 space-y-1">
+        <span class="font-mono text-xs font-bold text-ng-success">Sem "esquecer de avisar"</span>
+        <p class="text-xs leading-relaxed text-ng-text-muted">
+          Mesmo dentro de <code class="font-mono text-ng-text">setTimeout</code>, WebSocket ou serviço compartilhado, chamar
+          <code class="font-mono text-ng-text">signal.update()</code> notifica a tela automaticamente — sem precisar de <code class="font-mono text-ng-text">markForCheck()</code>.
+        </p>
+      </div>
+      <div class="rounded-xl border border-ng-purple/35 bg-ng-purple/10 p-4 space-y-1">
+        <span class="font-mono text-xs font-bold text-ng-purple">Pais apenas dão passagem</span>
+        <p class="text-xs leading-relaxed text-ng-text-muted">
+          Os componentes ancestrais não têm seus templates reavaliados: eles só recebem um sinal de passagem (<code class="font-mono text-ng-text">Traversal</code>) até o destino.
+        </p>
+      </div>
+      <div class="rounded-xl border border-ng-info/35 bg-ng-info/10 p-4 space-y-1">
+        <span class="font-mono text-xs font-bold text-ng-info">Atualização cirúrgica</span>
+        <p class="text-xs leading-relaxed text-ng-text-muted">
+          Apenas o componente que leu o signal é atualizado. Todo o resto da árvore fica intacto com <strong class="text-ng-text">0</strong> trabalho desperdiçado.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 4: Tabela Comparativa -->
+  <section
+    aria-label="Tabela comparativa rápida entre Zone.js e Zoneless + Signals"
+    class="ng-card ui-card-stage space-y-4 p-6"
+  >
+    <h2 class="display-title text-lg font-bold text-ng-text">
+      Qual é a diferença na prática?
+    </h2>
+
+    <div class="overflow-x-auto rounded-xl border border-ng-border">
+      <table class="w-full border-collapse text-left text-xs">
+        <thead class="bg-ng-bg font-mono text-[11px] text-ng-text-subtle">
+          <tr class="border-b border-ng-border">
+            <th scope="col" class="px-4 py-3 font-semibold text-ng-text">Modelo</th>
+            <th scope="col" class="px-4 py-3 font-semibold text-ng-text">Analogia</th>
+            <th scope="col" class="px-4 py-3 font-semibold text-ng-text">Quem avisa</th>
+            <th scope="col" class="px-4 py-3 font-semibold text-ng-text">O que é verificado</th>
+            <th scope="col" class="px-4 py-3 font-semibold text-ng-text">Ponto de atenção</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ng-border bg-ng-surface text-ng-text-muted">
+          @for (row of comparisonRows; track row.id) {
+            <tr>
+              <td class="whitespace-nowrap px-4 py-3 font-mono font-bold text-ng-text">{{ row.mode }}</td>
+              <td class="px-4 py-3">{{ row.analogy }}</td>
+              <td class="px-4 py-3">{{ row.trigger }}</td>
+              <td class="px-4 py-3">{{ row.checkedScope }}</td>
+              <td class="px-4 py-3">{{ row.commonTrap }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Seção 5: CTAs para os Laboratórios Práticos -->
+  <section aria-label="Explorar laboratórios interativos" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    @for (cta of labCtas; track cta.id) {
+      <a
+        [routerLink]="cta.route"
+        [attr.data-testid]="cta.testId"
+        class="ng-card ng-card-interactive ui-item-card group block space-y-2 p-5"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <span
+            [class]="'rounded border px-2 py-0.5 font-mono text-[11px] font-semibold ' + cta.badgeClasses"
+          >
+            {{ cta.badge }}
+          </span>
+          <span class="font-mono text-xs font-semibold text-ng-purple transition-transform group-hover:translate-x-0.5">
+            Abrir simulador →
+          </span>
+        </div>
+        <h3 class="display-title text-base font-bold text-ng-text">
+          {{ cta.title }}
+        </h3>
+        <p class="text-xs leading-relaxed text-ng-text-muted">
+          @for (segment of cta.segments; track $index) {
+            @if (segment.isCode) {
+              <code class="font-mono text-ng-text">{{ segment.text }}</code>
+            } @else {
+              {{ segment.text }}
+            }
+          }
+        </p>
+      </a>
+    }
+  </section>
+</div>

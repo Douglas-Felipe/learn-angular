@@ -5,7 +5,7 @@ export interface AppRouteData {
   docsUrl?: string;
 }
 
-export interface AppRoute extends Route {
-  data?: AppRouteData;
-  children?: AppRoute[];
+export interface AppRoute<TData extends AppRouteData = AppRouteData> extends Route {
+  data?: TData;
+  children?: AppRoute<AppRouteData>[];
 }

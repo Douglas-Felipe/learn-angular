@@ -381,9 +381,15 @@ describe('LifeCycle', () => {
     expect(text()).toContain('Breakpoint: ngOnChanges()');
     expect(objInput.value).toBe('Alan Turing');
 
-    // recreateObject() twice -> increments ref #1 -> #2 -> #3, stops playback, resets to step 0
+    // recreateObject() with blank input syncs draftObjectName to fallback and increments ref
+    objInput.value = '   ';
+    objInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
     clickButton('Recriar objeto');
+    expect(objInput.value).toBe('Alan Turing');
     expect(text()).toContain('Na memória (ref #2): { nome: "Alan Turing" }');
+
+    // recreateObject() twice -> increments ref #2 -> #3, stops playback, resets to step 0
     (el().querySelector('app-dom-tree button[data-hook="ngAfterViewChecked"]') as HTMLButtonElement).click();
     fixture.detectChanges();
     clickButton('Play');
@@ -422,6 +428,14 @@ describe('LifeCycle', () => {
     clickButton('Próximo hook');
     expect(text()).toContain('Breakpoint: ngOnChanges()');
     expect(text()).toContain("readonly usuario = input({ nome: 'Katherine Johnson' });");
+
+    // Verify mount() also reset committedObjectName and objectRefId to 1 for subsequent transitions
+    clickButton('Recriar objeto');
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain(
+      'Katherine Johnson'
+    );
+    expect(el().querySelector('[data-testid="dom-object-badge"]')?.textContent).toContain('ref #1');
+    expect(text()).toContain('Na memória (ref #2): { nome: "Ada Lovelace" }');
 
     // Calling mount while playing at a later step stops timer and resets to step 0
     (el().querySelector('app-dom-tree button[data-hook="ngDoCheck"]') as HTMLButtonElement).click();
@@ -485,8 +499,8 @@ describe('LifeCycle', () => {
     expect(internal.steps()).toHaveLength(1);
     expect(internal.steps()[0].hook).toBe('ngOnDestroy');
 
+    const destroyRef = internal.steps();
     internal.destroy();
-    expect(internal.steps()).toHaveLength(1);
-    expect(internal.steps()[0].hook).toBe('ngOnDestroy');
+    expect(internal.steps()).toBe(destroyRef);
   });
 });
