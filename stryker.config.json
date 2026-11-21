@@ -11,12 +11,23 @@
   "coverageAnalysis": "perTest",
   "ignoreStatic": true,
   "ignorers": ["angular"],
+  "ignorePatterns": [
+    ".angular",
+    "coverage",
+    "dist",
+    ".agents",
+    ".gemini",
+    ".github",
+    ".vscode"
+  ],
   "mutate": [
     "src/app/**/*.ts",
     "!src/app/**/*.spec.ts",
     "!src/app/**/*.interface.ts",
+    "!src/app/**/*.data.ts",
+    "!src/app/**/*.config.ts",
+    "!src/app/**/*.constant.ts",
     "!src/app/**/index.ts",
-    "!src/app/app.config.ts",
     "!src/app/app.routes.ts"
   ],
   "thresholds": {
