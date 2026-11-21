@@ -1,0 +1,217 @@
+<section
+  [attr.data-testid]="'tree-' + tree().strategy"
+  [attr.aria-label]="'Árvore de componentes ' + strategyMeta().decoratorValue"
+  class="ng-card ng-card-interactive ui-card-stage flex h-full flex-col justify-between space-y-4 p-5"
+>
+  <!-- Tree Card Header -->
+  <div class="space-y-3 border-b border-ng-border pb-3.5">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span
+          [class]="
+            'ui-pill inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-mono text-xs font-bold ' +
+            strategyMeta().pillClasses
+          "
+        >
+          <span
+            [class]="'h-2 w-2 rounded-full ' + strategyMeta().dotClass"
+            aria-hidden="true"
+          ></span>
+          {{ strategyMeta().decoratorValue }}
+        </span>
+
+        @if (isZonelessOnPush()) {
+          <span
+            class="rounded border border-ng-success/40 bg-ng-success/15 px-2 py-0.5 font-mono text-[11px] font-semibold text-ng-success"
+          >
+            padrão v22
+          </span>
+        }
+      </div>
+
+      <span class="font-mono text-[11px] text-ng-text-subtle">
+        Clique em um nó para disparar
+      </span>
+    </div>
+
+    <p class="text-xs leading-relaxed text-ng-text-muted">
+      {{ strategySubtitle() }}
+    </p>
+
+    <!-- Live Metrics Bar -->
+    <div class="flex flex-wrap items-center gap-1.5 font-mono text-[11px]">
+      <span
+        data-testid="metric-checked"
+        class="rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-semibold text-ng-text"
+      >
+        Verificados: {{ tree().metrics.checked }}/{{ tree().metrics.total }}
+      </span>
+      <span
+        data-testid="metric-skipped"
+        class="rounded border border-ng-border bg-ng-bg px-2 py-0.5 text-ng-text-muted"
+      >
+        Pulados: {{ tree().metrics.skipped }}
+      </span>
+      @if (tree().metrics.wasted > 0) {
+        <span
+          data-testid="metric-wasted"
+          class="rounded border border-ng-warning/40 bg-ng-warning/15 px-2 py-0.5 font-semibold text-ng-warning"
+        >
+          Sem mudança: {{ tree().metrics.wasted }}
+        </span>
+      }
+      @if (tree().metrics.traversalOnly > 0) {
+        <span
+          data-testid="metric-traversal"
+          class="rounded border border-ng-purple/40 bg-ng-purple/15 px-2 py-0.5 font-semibold text-ng-purple"
+        >
+          Passa direto: {{ tree().metrics.traversalOnly }}
+        </span>
+      }
+      @if (tree().metrics.stale > 0) {
+        <span
+          data-testid="metric-stale"
+          class="rounded border border-ng-error/40 bg-ng-error/15 px-2 py-0.5 font-semibold text-ng-error"
+        >
+          Dessincronizado: {{ tree().metrics.stale }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <!-- Reusable Component Tree Node Template -->
+  <ng-template #treeNode let-id="id" let-compact="compact">
+    @let def = nodeDef(id);
+    @let snap = nodeSnapshot(id);
+    @let visual = nodeVisual(id);
+    <button
+      type="button"
+      [attr.data-node]="id"
+      [attr.data-status]="snap.status"
+      [attr.data-strategy]="tree().strategy"
+      [attr.aria-label]="'Disparar mudança em ' + def.label + ' (' + strategyMeta().decoratorValue + ')'"
+      (click)="onTriggerNode(id)"
+      [class]="
+        'ui-btn ui-pill flex w-full flex-col justify-between gap-1.5 rounded-xl border text-left ' +
+        (compact ? 'p-2.5 ' : 'max-w-[260px] p-3 ') +
+        visual.cardClasses +
+        (snap.isTarget ? ' ring-1 ring-ng-purple/60' : '')
+      "
+    >
+      <div class="flex w-full items-start justify-between gap-1.5">
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <span [class]="'h-2 w-2 shrink-0 rounded-full ' + visual.dotClass" aria-hidden="true"></span>
+            <span class="truncate font-mono text-xs font-bold text-ng-text">{{ def.label }}</span>
+          </div>
+          <span class="block truncate pl-3.5 font-mono text-[10px] text-ng-text-subtle">
+            &lt;{{ def.selector }}&gt;
+          </span>
+        </div>
+
+        <span
+          [class]="
+            'shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold ' +
+            visual.badgeClasses
+          "
+        >
+          {{ visual.badgeLabel }}
+        </span>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-1 pt-0.5 font-mono text-[10px]">
+        <span class="truncate text-ng-text-muted">{{ snap.flagLabel }}</span>
+
+        @if (snap.isTarget) {
+          <span
+            data-testid="node-mem-dom"
+            [class]="'rounded border px-1.5 py-0.5 font-semibold ' + memDomBadgeClass(snap)"
+          >
+            DOM: {{ snap.domValue }} | Mem: {{ snap.memoryValue }}
+          </span>
+        } @else {
+          <span class="text-ng-text-subtle">DOM: {{ snap.domValue }}</span>
+        }
+      </div>
+
+      @if (snap.isTarget) {
+        <div
+          class="w-full truncate border-t border-ng-border/60 pt-1 font-mono text-[10px] text-ng-text-muted"
+          [title]="snap.granularityNote"
+        >
+          {{ snap.granularityNote }}
+        </div>
+      }
+    </button>
+  </ng-template>
+
+  <!-- 3-Level Data-Driven Hierarchical Component Tree -->
+  <div class="flex flex-col items-center">
+    <div class="mb-1 font-mono text-[10px] font-medium text-ng-text-subtle">
+      Nível 0 • Raiz
+    </div>
+    <ng-container *ngTemplateOutlet="treeNode; context: { id: rootNodeId, compact: false }" />
+
+    <!-- Fork 0 -> 1 -->
+    <div class="grid w-full grid-cols-2">
+      @for (branchId of rootBranches; track branchId) {
+        @let branchEdge = edgeClass(branchId);
+        <div
+          [class]="
+            'h-4 transition-colors duration-200 ' +
+            ($first ? 'ml-[50%] border-l-2 ' : 'mr-[50%] border-r-2 ') +
+            branchEdge
+          "
+        ></div>
+      }
+    </div>
+    <div class="grid w-full grid-cols-2">
+      @for (branchId of rootBranches; track branchId) {
+        @let branchEdge = edgeClass(branchId);
+        <div
+          [class]="
+            'h-3 border-t-2 transition-colors duration-200 ' +
+            ($first ? 'ml-[50%] rounded-tl-sm border-l-2 ' : 'mr-[50%] rounded-tr-sm border-r-2 ') +
+            branchEdge
+          "
+        ></div>
+      }
+    </div>
+
+    <!-- Depth 1 & Depth 2 Branches -->
+    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+      @for (branchId of rootBranches; track branchId) {
+        @let branchDef = nodeDef(branchId);
+        <div class="flex flex-col items-center">
+          <ng-container *ngTemplateOutlet="treeNode; context: { id: branchId, compact: true }" />
+
+          <div class="grid w-full grid-cols-2">
+            @for (leafId of branchDef.children; track leafId) {
+              <div
+                [class]="
+                  'h-4 border-t-2 transition-colors duration-200 ' +
+                  ($first ? 'ml-[50%] rounded-tl-sm border-l-2 ' : 'mr-[50%] rounded-tr-sm border-r-2 ') +
+                  edgeClass(leafId)
+                "
+              ></div>
+            }
+          </div>
+
+          <div class="grid w-full grid-cols-2 gap-2">
+            @for (leafId of branchDef.children; track leafId) {
+              <ng-container *ngTemplateOutlet="treeNode; context: { id: leafId, compact: true }" />
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Summary Footer -->
+  <p
+    data-testid="tree-summary-note"
+    class="rounded-lg border border-ng-border bg-ng-bg/70 px-3 py-2 text-xs leading-relaxed text-ng-text-muted"
+  >
+    {{ tree().summaryNote }}
+  </p>
+</section>

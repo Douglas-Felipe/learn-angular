@@ -1,0 +1,194 @@
+<div class="mx-auto max-w-6xl space-y-6 pb-10">
+  <!-- Header -->
+  <header class="flex flex-wrap items-start justify-between gap-4 border-b border-ng-border pb-5">
+    <div class="space-y-2">
+      <div class="flex flex-wrap items-center gap-2.5">
+        <span
+          class="rounded border border-ng-purple/35 bg-ng-purple/15 px-2.5 py-0.5 font-mono text-xs font-semibold text-ng-purple"
+        >
+          {{ modeMeta().runtimeBadge }}
+        </span>
+        <span class="font-mono text-xs text-ng-text-subtle">
+          Eager vs OnPush
+        </span>
+      </div>
+      <h1
+        class="display-title text-balance text-2xl font-black tracking-tight text-ng-text sm:text-3xl"
+      >
+        {{ modeMeta().title }}
+      </h1>
+      <p class="max-w-2xl text-sm leading-[1.65] text-ng-text-muted">
+        {{ modeMeta().subtitle }}
+      </p>
+    </div>
+
+    <!-- Scenario Switcher + Reset -->
+    <div class="flex flex-wrap items-center gap-2.5">
+      @for (option of modeMeta().scenarios; track option.id) {
+        <button
+          type="button"
+          [attr.data-testid]="'scenario-' + option.id"
+          [attr.aria-pressed]="scenario() === option.id"
+          [title]="option.shortHint"
+          (click)="selectScenario(option.id)"
+          [class]="scenarioButtonClass(option)"
+        >
+          @if (scenario() === option.id) {
+            <span class="mr-1.5" aria-hidden="true">●</span>
+          }
+          {{ option.label }}
+        </button>
+      }
+
+      <button
+        type="button"
+        data-testid="reset-simulation"
+        (click)="resetSimulation()"
+        aria-label="Reiniciar simulação"
+        class="ui-btn rounded-lg border border-ng-border bg-ng-surface px-3 py-2 font-mono text-xs font-medium text-ng-text-muted hover:border-ng-purple/60 hover:bg-ng-surface-hover hover:text-ng-text"
+      >
+        Reiniciar
+      </button>
+    </div>
+  </header>
+
+  <!-- Stage Controller Card -->
+  <section
+    aria-label="Controle de Etapas da Detecção de Mudanças"
+    class="ng-card ui-card-stage space-y-4 p-5"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ng-border/80 pb-4">
+      <div class="min-w-0 space-y-1">
+        <div class="flex flex-wrap items-center gap-2">
+          <span
+            [class]="
+              'ui-pill inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 font-mono text-xs font-bold ' +
+              currentPhaseTheme().badge
+            "
+          >
+            <span
+              [class]="'h-2 w-2 rounded-full ' + currentPhaseTheme().dot"
+              aria-hidden="true"
+            ></span>
+            {{ currentStep().badgeText }}
+          </span>
+          <span class="font-mono text-xs font-semibold text-ng-text-subtle">
+            Etapa {{ stepIndex() + 1 }} / {{ steps().length }}
+          </span>
+        </div>
+        <h2 class="display-title text-lg font-bold text-ng-text">
+          {{ currentStep().title }}
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        data-testid="trigger-current-node"
+        (click)="triggerCurrentNode()"
+        class="cyber-button cyber-button-emerald text-xs"
+      >
+        Disparar em {{ targetLabel() }}
+      </button>
+    </div>
+
+    <!-- Stepper Navigation Pills -->
+    <div
+      role="group"
+      aria-label="Etapas da execução"
+      class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6"
+    >
+      @for (s of steps(); track s.phase; let i = $index) {
+        <button
+          type="button"
+          [attr.data-step-phase]="s.phase"
+          [attr.aria-current]="i === stepIndex() ? 'step' : null"
+          (click)="goToStep(i)"
+          [class]="stepPillClass(i)"
+        >
+          {{ s.shortLabel }}
+        </button>
+      }
+    </div>
+
+    <!-- Transport Controls: Prev / Play-Pause / Next -->
+    <div class="flex flex-wrap items-center gap-2.5">
+      <button
+        type="button"
+        [disabled]="stepIndex() === 0"
+        (click)="prev()"
+        aria-label="Etapa anterior"
+        class="cyber-button cyber-button-gradient flex-1 gap-2 text-xs"
+      >
+        <span aria-hidden="true">◀</span>
+        <span>Etapa anterior</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="togglePlay()"
+        aria-label="Iniciar ou pausar reprodução automática"
+        [title]="isPlaying() ? 'Pausar ciclo automático' : 'Iniciar ciclo automático'"
+        class="cyber-button cyber-button-gradient min-w-[6.5rem] shrink-0 justify-center gap-1.5 text-xs"
+      >
+        <span class="w-3 text-center" aria-hidden="true">{{ isPlaying() ? '⏸' : '▶' }}</span>
+        <span>{{ isPlaying() ? 'Pausar' : 'Play' }}</span>
+      </button>
+
+      <button
+        type="button"
+        [disabled]="stepIndex() >= steps().length - 1"
+        (click)="next()"
+        aria-label="Próxima etapa"
+        class="cyber-button cyber-button-gradient flex-1 gap-2 text-xs"
+      >
+        <span>Próxima etapa</span>
+        <span aria-hidden="true">▶</span>
+      </button>
+    </div>
+
+    <!-- Step Explanation -->
+    <p data-testid="step-explanation" class="text-sm leading-[1.65] text-ng-text">
+      {{ currentStep().explanation }}
+    </p>
+
+    @if (currentStep().staleAlert) {
+      <p
+        data-testid="stale-dom-alert"
+        role="alert"
+        class="rounded-xl border border-ng-error/50 bg-ng-error/15 px-3.5 py-2.5 text-xs font-semibold leading-relaxed text-ng-error"
+      >
+        {{ currentStep().staleAlert }}
+      </p>
+    }
+
+    <!-- Visual Legend -->
+    <div class="flex flex-wrap items-center gap-2 border-t border-ng-border/80 pt-3 font-mono text-[11px]">
+      <span class="text-ng-text-subtle">Legenda:</span>
+      @for (item of legendItems(); track item.status) {
+        <span
+          class="inline-flex items-center gap-1.5 rounded border border-ng-border bg-ng-bg px-2 py-0.5 text-ng-text-muted"
+        >
+          <span [class]="'h-2 w-2 rounded-full ' + item.dotClass" aria-hidden="true"></span>
+          {{ item.legendLabel }}
+        </span>
+      }
+    </div>
+  </section>
+
+  <!-- Side-by-Side Component Trees Comparison: Eager vs OnPush -->
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <app-component-tree
+      class="block"
+      [tree]="currentStep().trees.eager"
+      [mode]="mode()"
+      (triggerNode)="triggerInNode($event)"
+    />
+
+    <app-component-tree
+      class="block"
+      [tree]="currentStep().trees['on-push']"
+      [mode]="mode()"
+      (triggerNode)="triggerInNode($event)"
+    />
+  </div>
+</div>

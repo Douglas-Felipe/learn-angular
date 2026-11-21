@@ -54,28 +54,28 @@
       </p>
     </a>
 
-    <article
-      aria-disabled="true"
+    <a
+      routerLink="/change-detection"
       data-testid="card-state"
-      class="ng-card ui-item-card cursor-not-allowed select-none space-y-2.5 border-dashed opacity-50 p-5"
+      class="ng-card ng-card-interactive ui-item-card group block space-y-2.5 p-5"
     >
       <div class="flex items-center justify-between gap-2">
         <span
-          class="inline-flex items-center rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] font-medium text-ng-text-subtle"
+          class="inline-flex items-center rounded border border-ng-purple/35 bg-ng-purple/10 px-2 py-0.5 font-mono text-[11px] font-medium text-ng-purple"
         >
           02 • State
         </span>
-        <span class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] text-ng-text-subtle">
-          Em breve
+        <span class="font-mono text-[11px] text-ng-purple transition-transform group-hover:translate-x-0.5">
+          Disponível →
         </span>
       </div>
-      <h2 class="display-title text-base font-semibold text-ng-text-muted">
+      <h2 class="display-title text-base font-semibold text-ng-text">
         Detecção de Mudanças
       </h2>
-      <p class="text-xs leading-[1.65] text-ng-text-subtle">
-        Compare o estado em memória com o template verificado durante cada ciclo de atualização de inputs.
+      <p class="text-xs leading-[1.65] text-ng-text-muted">
+        Compare Zone.js vs Zoneless + Signals e veja em câmera lenta como OnPush e Eager percorrem a árvore de componentes.
       </p>
-    </article>
+    </a>
 
     <article
       aria-disabled="true"
