@@ -35,19 +35,39 @@ A plataforma é modular e foi desenhada para cobrir os conceitos fundamentais e 
 
 ### 🟢 Módulos Disponíveis
 
-* **Ciclo de Vida de Componentes (`/life-cycle`):**
+* **01 • Ciclo de Vida de Componentes (`/life-cycle`):**
   O primeiro laboratório interativo da plataforma. Permite acompanhar em câmera lenta toda a linha do tempo de um componente — desde a alocação de memória no construtor, passando pela sincronização de inputs e projeção de conteúdo, até a montagem da view e o descarte final.
+* **02 • Detecção de Mudanças (`/change-detection`):**
+  Comparação interativa entre **Zone.js (Clássico)** e **Zoneless + Signals**, mostrando em câmera lenta como `Default` (Eager) e `OnPush` percorrem a árvore de componentes, além de um guia com resumo e analogias dos erros mais comuns.
 
 ### 🟡 O que está por vir (Roadmap Futuro)
 
-* **Detecção de Mudanças & Reatividade (Signals vs. Zone.js):**
-  Visualização em câmera lenta de como o Angular rastreia dependências e propaga notificações de mudanças — comparando o modelo de dirty-checking clássico com a reatividade cirúrgica e sem overhead dos Signals.
-* **Pipeline de Renderização & DOM:**
-  Inspeção desacelerada do processo de reconciliação, compilação de templates e o instante exato em que os novos hooks de renderização (`afterNextRender`, `afterEveryRender`) disparam após a pintura no browser.
-* **Injeção de Dependências (DI Tree):**
-  Navegação visual pela árvore hierárquica de injetores (Element Injector vs. Environment Injector), demonstrando a resolução de instâncias, escopos e ciclo de vida de serviços.
-* **Roteamento & Ciclo de Navegação:**
-  Simulação passo a passo da navegação: correspondência de URLs, execução de guards, carregamento de resolvers e ativação de rotas com lazy loading.
+* **03 • Renderização & DOM:**
+  Inspeção desacelerada de quando a View é montada e quando os callbacks pós-pintura (`afterNextRender`, `afterEveryRender`) disparam no navegador.
+* **04 • Injeção de Dependências (DI Tree):**
+  Navegação visual pela árvore hierárquica de injetores (`ElementInjector` → `EnvironmentInjector`) mostrando a resolução de instâncias, escopos, modificadores e o `NullInjectorError`.
+* **05 • Grafo de Reatividade (Signals):**
+  Visualização passo a passo do grafo *push-pull* de `signal`, `computed`, `linkedSignal` e `effect`, evidenciando marcação de sujeira, avaliação *lazy* e execução livre de recálculos duplicados.
+* **06 • View Encapsulation (Styles):**
+  Inspeção de como `Emulated`, `ShadowDom` e `None` geram atributos `_ngcontent` e `_nghost` e isolam seletores CSS no DOM.
+* **07 • Diretivas & `hostDirectives`:**
+  Visualização de como diretivas se acoplam ao elemento host, a ordem de execução de `host` bindings/listeners e composição sem herança.
+* **08 • Ciclo de Navegação & Lazy Loading (Router):**
+  Simulação do pipeline de rotas em câmera lenta: *matching* de URLs, execução de guards, download de chunks *lazy*, `resolvers` e ativação no `<router-outlet>`.
+* **09 • SSR & `TransferState`:**
+  Acompanhamento do HTML renderizado no servidor até o navegador e como o `TransferState` evita requisições HTTP duplicadas na inicialização.
+* **10 • `@defer` & Hidratação Incremental:**
+  Transição visual entre `@placeholder`, `@loading` e o componente real com triggers (`on viewport`, `on interaction`), mostrando como a hidratação incremental desperta apenas o necessário.
+* **11 • `@for`, `track` & Reconciliação de Listas:**
+  Comparação prática entre `track item.id` e `track $index` para revelar em tempo real quais nós do DOM são reutilizados, movidos ou destruídos e recriados.
+* **12 • Projeção (`ng-content`) & Views Dinâmicas:**
+  Diferença visual entre a árvore lógica e a árvore do DOM usando `<ng-content>`, `ngTemplateOutlet` e inserção imperativa com `ViewContainerRef`.
+* **13 • `resource()` & Interop com RxJS:**
+  Acompanhamento de estados assíncronos (`idle`, `loading`, `resolved`, `error`), cancelamento automático via `AbortSignal` e a ponte `toSignal` / `toObservable`.
+* **14 • Pipeline de Interceptors HTTP:**
+  Inspeção de requisições atravessando interceptors funcionais na ida (`next(req)`) e na volta da resposta, incluindo *retry*, cache e tratamento centralizado de erros.
+* **15 • Árvore de Formulários & Validação:**
+  Visualização de como estados (`dirty`, `touched`, `pending`) e validadores síncronos e assíncronos propagam do controle individual até o formulário raiz.
 
 ---
 

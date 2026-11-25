@@ -77,27 +77,29 @@
       </p>
     </a>
 
-    <article
-      aria-disabled="true"
-      data-testid="card-browser"
-      class="ng-card ui-item-card cursor-not-allowed select-none space-y-2.5 border-dashed opacity-50 p-5"
-    >
-      <div class="flex items-center justify-between gap-2">
-        <span
-          class="inline-flex items-center rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] font-medium text-ng-text-subtle"
-        >
-          03 • Browser
-        </span>
-        <span class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] text-ng-text-subtle">
-          Em breve
-        </span>
-      </div>
-      <h2 class="display-title text-base font-semibold text-ng-text-muted">
-        Renderização &amp; DOM
-      </h2>
-      <p class="text-xs leading-[1.65] text-ng-text-subtle">
-        Visualize em qual momento a View é montada e quando os callbacks pós-pintura disparam no navegador.
-      </p>
-    </article>
+    @for (module of upcomingModules; track module.id) {
+      <article
+        aria-disabled="true"
+        [attr.data-testid]="'card-' + module.id"
+        class="ng-card ui-item-card cursor-not-allowed select-none space-y-2.5 border-dashed opacity-50 p-5"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <span
+            class="inline-flex items-center rounded border border-ng-border bg-ng-bg px-2 py-0.5 font-mono text-[11px] font-medium text-ng-text-subtle"
+          >
+            {{ module.badge }}
+          </span>
+          <span class="rounded border border-ng-border bg-ng-bg px-1.5 py-0.5 font-mono text-[10px] text-ng-text-subtle">
+            Em breve
+          </span>
+        </div>
+        <h2 class="display-title text-base font-semibold text-ng-text-muted">
+          {{ module.title }}
+        </h2>
+        <p class="text-xs leading-[1.65] text-ng-text-subtle">
+          {{ module.description }}
+        </p>
+      </article>
+    }
   </div>
 </section>
